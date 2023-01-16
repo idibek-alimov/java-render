@@ -1,0 +1,8 @@
+{
+  "name": "maryam-shop",
+  "buildpacks": [
+    {
+      "ulr": "maryam/"
+    }
+  ]
+}
