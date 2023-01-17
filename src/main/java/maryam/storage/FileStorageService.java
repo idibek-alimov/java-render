@@ -41,13 +41,13 @@ public class FileStorageService implements FileStorageServiceInterface {
             System.out.println("before saving image");
             System.out.println(file.getInputStream());
             ////////
-            System.out.println("BEfore the new stuff line 1");
-            BufferedImage bi =(BufferedImage) file.getResource();  // retrieve image
-            System.out.println("BTNS line 2");
-            File outputfile = new File(new_name);
-            System.out.println("BTNS line 3");
-            ImageIO.write(bi, "jpg", outputfile);
-            System.out.println("AFTer the new stuff");
+//            System.out.println("BEfore the new stuff line 1");
+//            BufferedImage bi =(BufferedImage) file.getResource();  // retrieve image
+//            System.out.println("BTNS line 2");
+//            File outputfile = new File(new_name);
+//            System.out.println("BTNS line 3");
+//            ImageIO.write(bi, "jpg", outputfile);
+//            System.out.println("AFTer the new stuff");
             ///////
 
             System.out.println(this.root.resolve(new_name));
