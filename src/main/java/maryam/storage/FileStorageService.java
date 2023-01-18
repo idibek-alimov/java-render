@@ -1,5 +1,6 @@
 package maryam.storage;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class FileStorageService implements FileStorageServiceInterface {
 //            ImageIO.write(bi, "jpg", outputfile);
 //            System.out.println("AFTer the new stuff");
             ///////
-
+            byte[] image = Base64.encodeBase64(file.getBytes());
             System.out.println(this.root.resolve(new_name));
             Files.copy(file.getInputStream(),this.root.resolve(new_name));
             System.out.println("after saving image");
