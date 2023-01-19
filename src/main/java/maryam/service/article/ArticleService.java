@@ -84,4 +84,9 @@ public class ArticleService {
         User user= userRepository.findByUsername(username);
         return articleRepository.getByUser(user.getId());
     }
+    public List<Article> getByUserLiked(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        User user= userRepository.findByUsername(username);
+        return articleRepository.getByUserLiked(user.getId());
+    }
 }
