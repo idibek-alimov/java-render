@@ -3,6 +3,7 @@ package maryam.service.product;
 import lombok.RequiredArgsConstructor;
 import maryam.controller.product.CreateArticleHolder;
 import maryam.controller.product.PictureHolder;
+import maryam.data.like.LikeRepository;
 import maryam.data.product.ProductRepository;
 import maryam.data.user.UserRepository;
 import maryam.models.inventory.Inventory;
@@ -36,6 +37,7 @@ public class ProductService implements ProductServiceInterface{
     private final VisitService visitService;
     private final TagService tagService;
     private final ArticleService articleService;
+    private final LikeRepository likeRepository;
     public Product addProduct(Product product,
                               List<Inventory> inventories,
                               Color color,
@@ -210,6 +212,7 @@ public class ProductService implements ProductServiceInterface{
             System.out.println("the owner is ");
             System.out.println(productOptional.get().getUser().getUsername());
             //productRepository.deleteTagProduct(productOptional.get().getId());
+            likeRepository.deleteAll();
             Product product = productOptional.get();
             for(Tag tag:product.getTags()){
                 tag.getProducts().remove(product);
