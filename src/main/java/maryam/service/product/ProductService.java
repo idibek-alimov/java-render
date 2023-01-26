@@ -7,6 +7,7 @@ import maryam.data.product.ProductRepository;
 import maryam.data.user.UserRepository;
 import maryam.models.inventory.Inventory;
 import maryam.models.picture.Picture;
+import maryam.models.product.Article;
 import maryam.models.product.Color;
 import maryam.models.product.Product;
 import maryam.models.tag.Tag;
@@ -185,8 +186,8 @@ public class ProductService implements ProductServiceInterface{
         Set<Long> tag_Ids = new HashSet<>();
         Set<Long> visitedProductsId = new HashSet<>();
         for (Visit visit:visits){
-            visitedProductsId.add(visit.getProduct().getId());
-            for(Tag tag:visit.getProduct().getTags()) {
+            visitedProductsId.add(visit.getArticle().getId());
+            for(Tag tag:visit.getArticle().getProduct().getTags()) {
                 tag_Ids.add(tag.getId());
             }
         }
@@ -197,5 +198,27 @@ public class ProductService implements ProductServiceInterface{
     }
     public List<Product> getByPage(String name,Integer page, Integer amount){
         return productRepository.findProductByname(name,PageRequest.of(page,amount));
+    }
+
+    public void deleteProduct(Long id) throws Exception{
+        Optional<Product> productOptional = productRepository.findById(id);
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        User user = userRepository.findByUsername(username);
+        System.out.println("the user is");
+        System.out.println(user.getUsername());
+        if(productOptional.isPresent() && productOptional.get().getUser() == user ){
+            System.out.println("the owner is ");
+            System.out.println(productOptional.get().getUser().getUsername());
+            //productRepository.deleteTagProduct(productOptional.get().getId());
+            Product product = productOptional.get();
+            for(Tag tag:product.getTags()){
+                tag.getProducts().remove(product);
+                product.getTags().remove(tag);
+            }
+            productRepository.delete(productOptional.get());
+        }
+        else {
+            throw new Exception("Get fuckkkked");
+        }
     }
 }

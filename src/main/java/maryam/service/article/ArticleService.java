@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -88,5 +89,21 @@ public class ArticleService {
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         User user= userRepository.findByUsername(username);
         return articleRepository.getByUserLiked(user.getId());
+    }
+
+    public void deleteArticle(Long id) throws Exception{
+        Optional<Article> articleOptional = articleRepository.findById(id);
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        User user = userRepository.findByUsername(username);
+        System.out.println("the user is");
+        System.out.println(user.getUsername());
+        if(articleOptional.isPresent() && articleOptional.get().getProduct().getUser() == user ){
+            System.out.println("the owner is ");
+            System.out.println(articleOptional.get().getProduct().getUser().getUsername());
+            articleRepository.delete(articleOptional.get());
+        }
+        else {
+            throw new Exception("fuck you");
+        }
     }
 }

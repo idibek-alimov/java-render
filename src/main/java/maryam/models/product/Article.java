@@ -57,4 +57,27 @@ public class Article {
         this.product = product;
     }
 
+
+    public Article addInventory(Inventory inventory){
+        this.inventory.add(inventory);
+        inventory.setArticle(this);
+        return this;
+    }
+    public Article removeInventory(Inventory inventory){
+        this.inventory.remove(inventory);
+        inventory.setArticle(null);
+        return this;
+    }
+
+    public Article addPicture(Picture picture){
+        this.pictures.add(picture);
+        picture.setArticle(this);
+        return this;
+    }
+    public Article removePicture(Picture picture){
+        this.pictures.remove(picture);
+        picture.setArticle(null);
+        return this;
+    }
+
 }

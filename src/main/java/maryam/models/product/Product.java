@@ -14,9 +14,7 @@ import maryam.serializer.ProductSerializer;
 
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table
@@ -100,16 +98,17 @@ public class Product implements Comparable<Product>{
     private List<Article> articles = new ArrayList<>();
 
     @ManyToMany(mappedBy = "products")
-    private List<Tag> tags = new ArrayList<>();
+    private Set<Tag> tags = new HashSet<>();
 
 
     public Product(String name){
         this.name = name;
     }
 
-    public List<Tag> addTag(Tag tag){
+    public Set<Tag> addTag(Tag tag){
         this.tags.add(tag);
         return this.tags;
+
     }
 
     public List<Article> addArticle(Article article){
@@ -126,5 +125,10 @@ public class Product implements Comparable<Product>{
     @Override
     public int compareTo(Product product) {
         return this.getCreatedAt().compareTo(product.getCreatedAt());
+    }
+
+    public void removeTag(Tag tag){
+        this.tags.remove(tag);
+        tag.getProducts().remove(this);
     }
 }
