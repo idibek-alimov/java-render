@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import maryam.models.inventory.Inventory;
+import maryam.models.order.Item;
 import maryam.models.picture.Picture;
 import maryam.serializer.ArticleSerializer;
 import maryam.serializer.ProductSerializer;
@@ -44,6 +45,9 @@ public class Article {
     )
     private List<Inventory> inventory = new ArrayList<>();
 
+    @JsonBackReference
+    @OneToMany
+    private List<Item> items = new ArrayList<>();
     @JsonManagedReference
     @Column(name="pictures")
     @OneToMany(

@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import maryam.controller.product.CreateArticleHolder;
 import maryam.controller.product.PictureHolder;
 import maryam.data.like.LikeRepository;
+import maryam.data.order.ItemRepository;
 import maryam.data.product.ProductRepository;
 import maryam.data.user.UserRepository;
 import maryam.models.inventory.Inventory;
+import maryam.models.order.Item;
 import maryam.models.picture.Picture;
 import maryam.models.product.Article;
 import maryam.models.product.Color;
@@ -38,6 +40,8 @@ public class ProductService implements ProductServiceInterface{
     private final TagService tagService;
     private final ArticleService articleService;
     private final LikeRepository likeRepository;
+
+    private final ItemRepository itemRepository;
     public Product addProduct(Product product,
                               List<Inventory> inventories,
                               Color color,
@@ -217,6 +221,11 @@ public class ProductService implements ProductServiceInterface{
             for(Tag tag:product.getTags()){
                 tag.getProducts().remove(product);
                 product.getTags().remove(tag);
+            }
+            for(Article article:product.getArticles()){
+                for(Item item:article.getItems()){
+                    itemRepository.delete(item);
+                }
             }
             productRepository.delete(productOptional.get());
         }

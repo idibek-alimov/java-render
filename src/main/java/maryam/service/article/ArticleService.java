@@ -1,11 +1,13 @@
 package maryam.service.article;
 
 import lombok.RequiredArgsConstructor;
+import maryam.data.order.ItemRepository;
 import maryam.data.picture.PictureRepository;
 import maryam.data.product.ArticleRepository;
 import maryam.data.product.ProductRepository;
 import maryam.data.user.UserRepository;
 import maryam.models.inventory.Inventory;
+import maryam.models.order.Item;
 import maryam.models.product.Article;
 import maryam.models.product.Color;
 import maryam.models.product.Product;
@@ -38,6 +40,7 @@ public class ArticleService {
     private final UserRepository userRepository;
 
     private final ProductRepository productRepository;
+    private final ItemRepository itemRepository;
     public Article addArticle(List<Inventory> inventories, List<MultipartFile> pictures, Color color, Product product){
         System.out.println("article");
         Article article = articleRepository.save(new Article(product));
@@ -100,6 +103,9 @@ public class ArticleService {
         if(articleOptional.isPresent() && articleOptional.get().getProduct().getUser() == user ){
             System.out.println("the owner is ");
             System.out.println(articleOptional.get().getProduct().getUser().getUsername());
+            for(Item item:articleOptional.get().getItems()){
+                itemRepository.delete(item);
+            }
             articleRepository.delete(articleOptional.get());
         }
         else {
