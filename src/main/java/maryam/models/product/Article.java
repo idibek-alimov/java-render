@@ -46,7 +46,7 @@ public class Article {
     private List<Inventory> inventory = new ArrayList<>();
 
     @JsonBackReference
-    @OneToMany(orphanRemoval = true,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "article",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Item> items = new ArrayList<>();
     @JsonManagedReference
     @Column(name="pictures")

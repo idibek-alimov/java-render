@@ -103,9 +103,9 @@ public class ArticleService {
         if(articleOptional.isPresent() && articleOptional.get().getProduct().getUser() == user ){
             System.out.println("the owner is ");
             System.out.println(articleOptional.get().getProduct().getUser().getUsername());
-            for(Item item:articleOptional.get().getItems()){
-                itemRepository.delete(item);
-            }
+//            for(Item item:articleOptional.get().getItems()){
+//                itemRepository.delete(item);
+//            }
             articleRepository.delete(articleOptional.get());
         }
         else {

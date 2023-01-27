@@ -222,11 +222,11 @@ public class ProductService implements ProductServiceInterface{
                 tag.getProducts().remove(product);
                 product.getTags().remove(tag);
             }
-            for(Article article:product.getArticles()){
-                for(Item item:article.getItems()){
-                    itemRepository.delete(item);
-                }
-            }
+//            for(Article article:product.getArticles()){
+//                for(Item item:article.getItems()){
+//                    itemRepository.delete(item);
+//                }
+//            }
             productRepository.delete(productOptional.get());
         }
         else {
