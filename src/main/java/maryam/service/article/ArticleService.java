@@ -1,11 +1,13 @@
 package maryam.service.article;
 
 import lombok.RequiredArgsConstructor;
+import maryam.data.like.LikeRepository;
 import maryam.data.picture.PictureRepository;
 import maryam.data.product.ArticleRepository;
 import maryam.data.product.ProductRepository;
 import maryam.data.user.UserRepository;
 import maryam.models.inventory.Inventory;
+import maryam.models.like.Like;
 import maryam.models.product.Article;
 import maryam.models.product.Color;
 import maryam.models.product.Product;
@@ -35,8 +37,10 @@ public class ArticleService {
     private final PictureService pictureService;
     private final ColorService colorService;
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
 
     private final ProductRepository productRepository;
+    private final ProductService productService;
     public Article addArticle(List<Inventory> inventories, List<MultipartFile> pictures, Color color, Product product){
         System.out.println("article");
         Article article = articleRepository.save(new Article(product));
@@ -88,5 +92,25 @@ public class ArticleService {
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         User user= userRepository.findByUsername(username);
         return articleRepository.getByUserLiked(user.getId());
+    }
+    public void deleteArticle(Long id) throws Exception{
+        try{
+            Product product = articleRepository.getById(id).getProduct();
+            likeRepository.deleteAll(likeRepository.findByArticle(articleRepository.getById(id)));
+            if(product.getArticles().size() == 1){
+                productService.deleteProduct(product.getId());
+            }
+            else{
+                articleRepository.deleteById(id);
+
+            }
+
+                //like.getArticle();
+
+
+        }
+        catch (Exception exception){
+            throw new RuntimeException("fuck you "+exception);
+        }
     }
 }

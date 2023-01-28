@@ -198,4 +198,32 @@ public class ProductService implements ProductServiceInterface{
     public List<Product> getByPage(String name,Integer page, Integer amount){
         return productRepository.findProductByname(name,PageRequest.of(page,amount));
     }
+
+    public void deleteProduct(Long id) throws Exception{
+        Optional<Product> productOptional = productRepository.findById(id);
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        User user = userRepository.findByUsername(username);
+        System.out.println("the user is");
+        System.out.println(user.getUsername());
+        if(productOptional.isPresent() && productOptional.get().getUser() == user ){
+            System.out.println("the owner is ");
+            System.out.println(productOptional.get().getUser().getUsername());
+            //productRepository.deleteTagProduct(productOptional.get().getId());
+//            likeRepository.deleteAll();
+            Product product = productOptional.get();
+            for(Tag tag:product.getTags()){
+                tag.getProducts().remove(product);
+                product.getTags().remove(tag);
+            }
+//            for(Article article:product.getArticles()){
+//                for(Item item:article.getItems()){
+//                    itemRepository.delete(item);
+//                }
+//            }
+            productRepository.delete(productOptional.get());
+        }
+        else {
+            throw new Exception("Get fuckkkked");
+        }
+    }
 }
