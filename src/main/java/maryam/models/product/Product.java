@@ -43,9 +43,11 @@ public class Product implements Comparable<Product>{
     private String name;
 
     //@JsonView(View.Detailed.class)
+//    @JsonManagedReference(value = "user-product")
     @ManyToOne
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
+//    @JsonIgnore
 //    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 //    @JsonIdentityReference(alwaysAsId = true)
     private User user;
@@ -88,14 +90,17 @@ public class Product implements Comparable<Product>{
         this.createdAt = new Date();
     }
 
-        @JsonManagedReference
-    @Column
+//        @JsonManagedReference(value = "product-article")
+//    @Column
     @OneToMany(
             mappedBy = "product",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+////        @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+////        @JsonIdentityReference(alwaysAsId = true)
     private List<Article> articles = new ArrayList<>();
+
 
     @ManyToMany(mappedBy = "products")
     private Set<Tag> tags = new HashSet<>();

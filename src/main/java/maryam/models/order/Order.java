@@ -1,8 +1,6 @@
 package maryam.models.order;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,12 +33,14 @@ public class Order {
 
     @ColumnDefault("false")
     private Boolean delivered;
-    @JsonView(View.OnlyId.class)
-    @JsonManagedReference
+//    @JsonView(View.OnlyId.class)
+//    @JsonManagedReference(value = "user-order")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     private User user;
 
-    @JsonManagedReference
+    @JsonManagedReference(value = "order-item")
     @Column(name="items")
     @OneToMany(
             mappedBy = "order",
