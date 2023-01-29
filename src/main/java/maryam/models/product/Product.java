@@ -14,9 +14,7 @@ import maryam.serializer.ProductSerializer;
 
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table
@@ -45,9 +43,11 @@ public class Product implements Comparable<Product>{
     private String name;
 
     //@JsonView(View.Detailed.class)
+//    @JsonManagedReference(value = "user-product")
     @ManyToOne
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
+//    @JsonIgnore
 //    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 //    @JsonIdentityReference(alwaysAsId = true)
     private User user;
@@ -90,26 +90,30 @@ public class Product implements Comparable<Product>{
         this.createdAt = new Date();
     }
 
-        @JsonManagedReference
-    @Column
+//        @JsonManagedReference(value = "product-article")
+//    @Column
     @OneToMany(
             mappedBy = "product",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+////        @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+////        @JsonIdentityReference(alwaysAsId = true)
     private List<Article> articles = new ArrayList<>();
 
+
     @ManyToMany(mappedBy = "products")
-    private List<Tag> tags = new ArrayList<>();
+    private Set<Tag> tags = new HashSet<>();
 
 
     public Product(String name){
         this.name = name;
     }
 
-    public List<Tag> addTag(Tag tag){
+    public Set<Tag> addTag(Tag tag){
         this.tags.add(tag);
         return this.tags;
+
     }
 
     public List<Article> addArticle(Article article){
@@ -126,5 +130,10 @@ public class Product implements Comparable<Product>{
     @Override
     public int compareTo(Product product) {
         return this.getCreatedAt().compareTo(product.getCreatedAt());
+    }
+
+    public void removeTag(Tag tag){
+        this.tags.remove(tag);
+        tag.getProducts().remove(this);
     }
 }

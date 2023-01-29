@@ -27,7 +27,7 @@ public class Picture {
 
     private String name;
 
-    @JsonBackReference
+    @JsonBackReference(value = "article-picture")
     @ManyToOne(fetch = FetchType.LAZY)
     private Article article;
 

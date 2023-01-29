@@ -28,4 +28,6 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
     List<Article> getByUserLiked(Long id);
 
 
+
+
 }

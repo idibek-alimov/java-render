@@ -1,12 +1,12 @@
 package maryam.models.product;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import maryam.models.inventory.Inventory;
+import maryam.models.order.Item;
 import maryam.models.picture.Picture;
 import maryam.serializer.ArticleSerializer;
 import maryam.serializer.ProductSerializer;
@@ -28,14 +28,20 @@ public class Article {
 
 //    private Integer identifier;
 
-    @JsonBackReference
+//    @JsonBackReference(value = "product-article")
+
     @ManyToOne
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Product product;
 
+    @JsonManagedReference()
     @ManyToOne
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Color color;
 
-    @JsonManagedReference
+    @JsonManagedReference(value = "article-inventory")
     @Column(name = "pictures")
     @OneToMany(
             mappedBy = "article",
@@ -44,7 +50,10 @@ public class Article {
     )
     private List<Inventory> inventory = new ArrayList<>();
 
-    @JsonManagedReference
+//    @JsonBackReference(value = "article-item")
+    @OneToMany(mappedBy = "article",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Item> items = new ArrayList<>();
+    @JsonManagedReference(value = "article-picture")
     @Column(name="pictures")
     @OneToMany(
             mappedBy = "article",
@@ -55,6 +64,29 @@ public class Article {
 
     public Article(Product product){
         this.product = product;
+    }
+
+
+    public Article addInventory(Inventory inventory){
+        this.inventory.add(inventory);
+        inventory.setArticle(this);
+        return this;
+    }
+    public Article removeInventory(Inventory inventory){
+        this.inventory.remove(inventory);
+        inventory.setArticle(null);
+        return this;
+    }
+
+    public Article addPicture(Picture picture){
+        this.pictures.add(picture);
+        picture.setArticle(this);
+        return this;
+    }
+    public Article removePicture(Picture picture){
+        this.pictures.remove(picture);
+        picture.setArticle(null);
+        return this;
     }
 
 }

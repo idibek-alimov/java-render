@@ -24,7 +24,7 @@ public class Inventory {
     @SequenceGenerator(name = "inventory_id_generator", sequenceName = "Inventory_id_generator",allocationSize=1)
     private Long id;
 
-    @JsonBackReference
+    @JsonBackReference(value = "article-inventory")
     @ManyToOne
     private Article article;
 
