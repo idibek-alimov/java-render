@@ -103,14 +103,14 @@ public class Product implements Comparable<Product>{
 
 
     @ManyToMany(mappedBy = "products")
-    private Set<Tag> tags = new HashSet<>();
+    private List<Tag> tags = new ArrayList<>();
 
 
     public Product(String name){
         this.name = name;
     }
 
-    public Set<Tag> addTag(Tag tag){
+    public List<Tag> addTag(Tag tag){
         this.tags.add(tag);
         return this.tags;
 
