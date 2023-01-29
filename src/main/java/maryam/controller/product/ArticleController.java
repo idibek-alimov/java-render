@@ -66,4 +66,8 @@ public class ArticleController {
 //    public void ArticleDelete(@PathVariable("id")Long id) throws Exception{
 //        articleService.deleteArticle(id);
 //    }
+    @DeleteMapping(path = "/delete/{id}")
+    public void ArticleDelete(@PathVariable("id")Long id) throws Exception{
+        articleService.deleteArticle(id);
+    }
 }

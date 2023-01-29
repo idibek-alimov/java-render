@@ -2,6 +2,7 @@ package maryam.service.article;
 
 import lombok.RequiredArgsConstructor;
 import maryam.data.like.LikeRepository;
+import maryam.data.order.ItemRepository;
 import maryam.data.picture.PictureRepository;
 import maryam.data.product.ArticleRepository;
 import maryam.data.product.ProductRepository;
@@ -38,9 +39,9 @@ public class ArticleService {
     private final ColorService colorService;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
-
+    private final ItemRepository itemRepository;
     private final ProductRepository productRepository;
-    private final ProductService productService;
+    //private final ProductService productService;
     public Article addArticle(List<Inventory> inventories, List<MultipartFile> pictures, Color color, Product product){
         System.out.println("article");
         Article article = articleRepository.save(new Article(product));
@@ -95,13 +96,26 @@ public class ArticleService {
     }
     public void deleteArticle(Long id) throws Exception{
         try{
-            Product product = articleRepository.getById(id).getProduct();
-            likeRepository.deleteAll(likeRepository.findByArticle(articleRepository.getById(id)));
+            Article article = articleRepository.getById(id);
+            Product product = article.getProduct();
+            likeRepository.deleteAll(likeRepository.findByArticle(article));
+            itemRepository.deleteAll(itemRepository.findByArticle(articleRepository.getById(id)));
             if(product.getArticles().size() == 1){
-                productService.deleteProduct(product.getId());
+                for(int i=0;i<product.getTags().size();i++){
+                    product.getTags().get(i).getProducts().remove(product);
+                    product.getTags().remove(product.getTags().get(i));
+                    System.out.println("123");
+                }
+                productRepository.delete(product);
+                //productService.deleteProduct(product.getId());
             }
             else{
-                articleRepository.deleteById(id);
+                System.out.println("432");
+                System.out.println(id);
+                System.out.println(articleRepository.getById(id).getProduct().getName());
+                product.getArticles().remove(article);
+                articleRepository.delete(article);
+                System.out.println("deleted i guess");
 
             }
 
