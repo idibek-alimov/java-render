@@ -1,6 +1,5 @@
 package maryam.storage;
 
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -39,9 +38,9 @@ public class FileStorageService implements FileStorageServiceInterface {
         String extension = file.getOriginalFilename().split("\\.")[1];
         String new_name = String.format("%s%s",System.currentTimeMillis(),random.nextInt(100000)+"."+extension);
         try{
-            System.out.println("before saving image");
-            System.out.println(file.getInputStream());
-            ////////
+//            System.out.println("before saving image");
+//            System.out.println(file.getInputStream());
+//            ////////
 //            System.out.println("BEfore the new stuff line 1");
 //            BufferedImage bi =(BufferedImage) file.getResource();  // retrieve image
 //            System.out.println("BTNS line 2");
@@ -49,11 +48,12 @@ public class FileStorageService implements FileStorageServiceInterface {
 //            System.out.println("BTNS line 3");
 //            ImageIO.write(bi, "jpg", outputfile);
 //            System.out.println("AFTer the new stuff");
-            ///////
-            byte[] image = Base64.encodeBase64(file.getBytes());
-            System.out.println(this.root.resolve(new_name));
-            Files.copy(file.getInputStream(),this.root.resolve(new_name));
-            System.out.println("after saving image");
+//            ///////
+//
+//            System.out.println(this.root.resolve(new_name));
+//            Files.copy(file.getInputStream(),this.root.resolve(new_name));
+//            System.out.println("after saving image");
+            new_name = file.getOriginalFilename();
             return new_name;
         }catch (Exception e){
             System.out.println("something vent wrong");

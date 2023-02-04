@@ -8,7 +8,6 @@ import maryam.data.product.ArticleRepository;
 import maryam.data.product.ProductRepository;
 import maryam.data.user.UserRepository;
 import maryam.models.inventory.Inventory;
-import maryam.models.like.Like;
 import maryam.models.product.Article;
 import maryam.models.product.Color;
 import maryam.models.product.Product;
@@ -41,64 +40,55 @@ public class ArticleService {
     private final LikeRepository likeRepository;
     private final ItemRepository itemRepository;
     private final ProductRepository productRepository;
-
-    //private final ProductService productService;
-    public Article addArticle(List<Inventory> inventories, List<MultipartFile> pictures, Color color, Product product) {
+    public Article addArticle(List<Inventory> inventories, List<MultipartFile> pictures, Color color, Product product){
         System.out.println("article");
         Article article = articleRepository.save(new Article(product));
         System.out.println("setpics");
-        article.setPictures(pictureService.addPictures(pictures, article));
+        article.setPictures(pictureService.addPictures(pictures,article));
         System.out.println("setinventory");
-        article.setInventory(inventoryService.addInventories(inventories, article));
+        article.setInventory(inventoryService.addInventories(inventories,article));
         System.out.println("before color thing");
-        article.setColor(colorService.addColor(color, article));
+        article.setColor(colorService.addColor(color,article));
         System.out.println("before retuning article 112232");
         return article;
     }
-
-    public Article addArticle(List<Inventory> inventories, Color color, Product product) {
+    public Article addArticle(List<Inventory> inventories, Color color, Product product){
         Article article = articleRepository.save(new Article(product));
-        article.setInventory(inventoryService.addInventories(inventories, article));
-        article.setColor(colorService.addColor(color, article));
+        article.setInventory(inventoryService.addInventories(inventories,article));
+        article.setColor(colorService.addColor(color,article));
         return article;
     }
 
-    public Page<Article> getListOfArticles(Integer page, Integer amount) {
+    public Page<Article> getListOfArticles(Integer page, Integer amount){
 
-        return articleRepository.findAll(PageRequest.of(page, amount));
+        return articleRepository.findAll(PageRequest.of(page,amount));
     }
-
-    public Page<Article> getListOfSimilarArticles(Long id, Integer page, Integer amount) {
+    public Page<Article> getListOfSimilarArticles(Long id,Integer page, Integer amount){
         List<Tag> tags = new ArrayList<>();
         Article article = articleRepository.getById(id);
-        for (Tag tag : article.getProduct().getTags()) {
+        for(Tag tag:article.getProduct().getTags()){
             tags.add(tag);
         }
-        return articleRepository.findSimilarArticles(tags, id, PageRequest.of(page, amount));
+        return articleRepository.findSimilarArticles(tags,id,PageRequest.of(page,amount));
     }
 
-    public Optional<Article> getArticle(Long id) {
+    public Optional<Article> getArticle(Long id){
         return articleRepository.findById(id);
     }
-
-    public List<Article> getArticlesInProduct(Long id) {
+    public List<Article> getArticlesInProduct(Long id){
         return articleRepository.findByProductId(id);
     }
 
-    public List<Article> searchByName(String searchText, Integer page, Integer amount) {
-        return articleRepository.findBySimilarName(searchText, PageRequest.of(page, amount));
+    public List<Article> searchByName(String searchText,Integer page,Integer amount){
+        return articleRepository.findBySimilarName(searchText,PageRequest.of(page,amount));
     }
-
-    public List<Article> getByUser() {
+    public List<Article> getByUser(){
+        System.out.println("2");
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        User user = userRepository.findByUsername(username);
+        System.out.println("3");
+        User user= userRepository.findByUsername(username);
+        System.out.println("4");
         return articleRepository.getByUser(user.getId());
-    }
-
-    public List<Article> getByUserLiked() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        User user = userRepository.findByUsername(username);
-        return articleRepository.getByUserLiked(user.getId());
     }
 
     public void deleteArticle(Long id) throws Exception {

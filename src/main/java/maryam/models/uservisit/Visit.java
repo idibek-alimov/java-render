@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import maryam.models.product.Article;
 import maryam.models.product.Product;
 import maryam.models.user.User;
 import maryam.serializer.ProductSerializer;
@@ -32,7 +31,7 @@ public class Visit {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
 //    @JsonIgnoreProperties({"category","name","user","description","price","pictures","inventory"})
-    public Article article;
+    public Product product;
 
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
@@ -41,9 +40,9 @@ public class Visit {
 
     private Date createdAt;
 
-    public Visit(User user,Article article){
+    public Visit(User user,Product product){
         this.user = user;
-        this.article = article;
+        this.product = product;
     }
 
 

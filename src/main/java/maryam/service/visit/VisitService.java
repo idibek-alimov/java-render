@@ -1,12 +1,10 @@
 package maryam.service.visit;
 
 import lombok.RequiredArgsConstructor;
-import maryam.data.product.ArticleRepository;
 import maryam.data.product.ProductRepository;
 import maryam.data.user.UserRepository;
 import maryam.data.visit.UserVisitRepository;
 import maryam.data.visit.VisitRepository;
-import maryam.models.product.Article;
 import maryam.models.product.Product;
 import maryam.models.user.User;
 import maryam.models.uservisit.UserVisits;
@@ -25,7 +23,7 @@ public class VisitService {
     private final UserVisitRepository userVisitRepository;
     private final VisitRepository visitRepository;
     private final UserVisitService userVisitService;
-    private final ArticleRepository articleRepository;
+    private final ProductRepository productRepository;
     public void addVisit(Long id){
         User user = userRepository.findByUsername((String) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal());
@@ -37,13 +35,13 @@ public class VisitService {
         else{
             userVisits  = userVisitsOptional.get();
         }
-        Article article = articleRepository.findById(id).get();
-        Optional<Visit> visitOptional = visitRepository.findByArticleAndUser(article,user);
+        Product product = productRepository.findById(id).get();
+        Optional<Visit> visitOptional = visitRepository.findByProductAndUser(product,user);
         if(visitOptional.isPresent()){
                visitOptional.get().setCreatedAt(new Date());
         }
         else {
-            visitRepository.save(new Visit(user, article));
+            visitRepository.save(new Visit(user, product));
             userVisits.setVisitcount(userVisits.getVisitcount()+1);
         }
         if(userVisits.getVisitcount()>200){

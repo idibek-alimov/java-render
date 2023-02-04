@@ -1,12 +1,14 @@
 package maryam.models.user;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import maryam.models.order.Order;
-import maryam.models.product.Product;
+//import maryam.models.order.Order;
 import maryam.models.role.Role;
 import maryam.serializer.UserSerializer;
 
@@ -26,7 +28,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(generator = "user_id_generator", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "user_id_generator",initialValue = 1, allocationSize = 1,sequenceName = "User_id_generator")
+    @SequenceGenerator(name = "user_id_genrator", sequenceName = "sc.user_id_generator",allocationSize=1)
     @Column(unique=true, nullable=false)
     private Long id;
 
@@ -36,22 +38,8 @@ public class User {
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonManagedReference(value = "user-role")
     private Collection<Role> roles = new ArrayList<>();
 
-
-//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-//    @JsonBackReference(value = "user-product")
-//    @JsonBackReference(value = "user-product")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    @JsonIdentityReference(alwaysAsId = true)
-    @OneToMany(
-            mappedBy = "user",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Product> products = new ArrayList<>();
     //Not relevant
 //    @JsonBackReference
 //    //@Column(name="pictures")
@@ -61,17 +49,4 @@ public class User {
 //            orphanRemoval = true
 //    )
 //    private List<Order> orderList = new ArrayList<>();
-
-//    @JsonBackReference("user-order")
-    @OneToMany(
-            mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Order> orders = new ArrayList<>();
-
-    public User(String username,String password){
-        this.username = username;
-        this.password = password;
-    }
 }

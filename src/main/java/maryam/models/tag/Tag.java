@@ -1,6 +1,5 @@
 package maryam.models.tag;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,8 +21,7 @@ public class Tag {
     @SequenceGenerator(name = "tag_id_generator",initialValue = 1, allocationSize = 1,sequenceName = "Tag_id_generator")
     private Long id;
     private String name;
-
-    @ManyToMany()
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name="Tag_Product",
             joinColumns = {@JoinColumn(name="tag_id")},
@@ -36,9 +34,5 @@ public class Tag {
     }
     public void addProduct(Product product){
         this.products.add(product);
-    }
-    public void removeProduct(Product product){
-        this.products.remove(product);
-        product.getTags().remove(this);
     }
 }

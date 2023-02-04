@@ -24,8 +24,8 @@ public class PictureSerializer extends StdSerializer<Picture> {
             throws IOException, JsonProcessingException{
         jgen.writeStartObject();
         jgen.writeNumberField("id",picture.getId());
-        jgen.writeObjectField("src",picture.getName());
-        //jgen.writeObjectField("src",fileStorageService.load(picture.getName()).getURL());
+//        jgen.writeObjectField("src",fileStorageService.load(picture.getName()).getURL());
+        jgen.writeStringField("src", picture.getName());
         jgen.writeEndObject();
     }
 }
