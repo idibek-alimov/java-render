@@ -102,8 +102,7 @@ public class ProductController {
     public Optional<Product> retrieveProduct(@PathVariable("id") Long id){
         String user = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         if(user!="anonymousUser"){
-            System.out.println("hello there . General Kenobe");
-//            visitService.addVisit(id);
+            visitService.addVisit(id);
         }
         return  productService.getProduct(id);
     }
@@ -114,10 +113,10 @@ public class ProductController {
         return productService.findByName(name,page,amount);
     }
 
-//    @DeleteMapping(path="/delete/{id}")
-//    public void deleteProduct(@PathVariable("id")Long id){
-//        productService.removeProduct(id);
-//    }
+    @DeleteMapping(path="/delete/{id}")
+    public void deleteProduct(@PathVariable("id")Long id){
+        productService.removeProduct(id);
+    }
 
 //    @JsonView(View.Detailed.class)
 //    @JsonView(ProductSerializer.class)
@@ -147,10 +146,6 @@ public class ProductController {
     @GetMapping(path="/{name}/{page}/{amount}")
     public List<Product> productsByPage(@PathVariable("name")String name,@PathVariable("page")Integer page,@PathVariable("amount")Integer amount){
         return productService.getByPage(name,page,amount);
-    }
-    @DeleteMapping(path = "/delete/{id}")
-    public void productDelete(@PathVariable("id")Long id) throws Exception{
-        productService.deleteProduct(id);
     }
 
 }

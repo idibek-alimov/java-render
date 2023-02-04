@@ -55,13 +55,9 @@ public class ArticleController {
     }
     @GetMapping(path="/byuser")
     public List<Article> getListByUser(){
+        System.out.println("1");
         return articleService.getByUser();
     }
-    @GetMapping(path="/liked")
-    public List<Article> getListByUserLiked(){
-        return articleService.getByUserLiked();
-    }
-
     @DeleteMapping(path = "/delete/{id}")
     public void deleteArticle(@PathVariable("id")Long id) throws Exception{
         articleService.deleteArticle(id);

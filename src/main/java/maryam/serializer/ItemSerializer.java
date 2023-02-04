@@ -27,7 +27,7 @@ public class ItemSerializer extends StdSerializer<Item> {
             throws IOException, JsonProcessingException {
         jgen.writeStartObject();
         jgen.writeNumberField("id",item.getId());
-        //jgen.writeObjectField("article",item.getArticle());
+        jgen.writeObjectField("article",item.getArticle());
         jgen.writeNumberField("amount",item.getAmount());
         jgen.writeEndObject();
     }

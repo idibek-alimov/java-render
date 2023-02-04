@@ -42,7 +42,6 @@ public interface ProductRepository extends JpaRepository<Product,Long>{
             "(SELECT product_id FROM visit WHERE user_id = (?1)) ORDER BY created_at DESC",nativeQuery = true)
     List<Product> getByResentVisit(Long id,Pageable pageable);
 
-//    @(value = "DELETE FROM tag_product WHERE product_id=?1", nativeQuery = true)
-//    void deleteTagProduct(Long id);
+
 
 }

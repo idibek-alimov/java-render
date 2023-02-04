@@ -28,7 +28,7 @@ public class Item {
 
 
     //@JsonView(View.OnlyId.class)
-//    @JsonManagedReference(value = "article-item")
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
 //    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 //    @JsonIdentityReference(alwaysAsId = true)
@@ -36,7 +36,7 @@ public class Item {
     private String size;
     //@JsonView(View.OnlyId.class)
     private Integer amount;
-    @JsonBackReference(value = "order-item")
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
     public Item(Article article,String size,Integer amount,Order order){

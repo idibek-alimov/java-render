@@ -6,15 +6,9 @@ import maryam.models.picture.Picture;
 import maryam.models.product.Article;
 import maryam.models.product.Product;
 import maryam.storage.FileStorageService;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,13 +28,15 @@ public class PictureService implements PictureServiceInterface{
         List<Picture> pictureList = new ArrayList<>();
         Picture newPic;
         for(MultipartFile pic:pictures){
-            //picname = storageService.save(pic);
-            /////////
-            newPic = new Picture(pic.getOriginalFilename());
-            //////////
-            //newPic = new Picture(picname);
+            System.out.println("one");
+            picname = storageService.save(pic);
+            System.out.println("two");
+            newPic = new Picture(picname);
+            System.out.println("three");
             newPic.setArticle(article);
+            System.out.println("four");
             pictureList.add(pictureRepository.save(newPic));
+            System.out.println("five");
           }
         return pictureList;
     }
@@ -54,26 +50,4 @@ public class PictureService implements PictureServiceInterface{
     public void removePictures(List<Picture> pictures) {
         pictureRepository.deleteAll(pictures);
     }
-
-    public static String encodeToString(BufferedImage image, String type) {
-        String imageString = null;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-        try {
-            ImageIO.write(image, type, bos);
-            byte[] imageBytes = bos.toByteArray();
-
-
-            imageString = Base64.encodeBase64(imageBytes).toString();
-
-            bos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return imageString;
-    }
 }
-
-
-
-
