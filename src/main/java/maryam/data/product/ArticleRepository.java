@@ -16,8 +16,8 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
             "(SELECT product_id FROM tag_product WHERE tag_id in (?1)) AND id != (?2)",nativeQuery = true)
     public Page<Article> findSimilarArticles(List<Tag> tags,Long id, Pageable pageable);
     @Query(value = "SELECT * FROM article WHERE product_id IN (SELECT id" +
-            " FROM product WHERE ?1 % ANY(STRING_TO_ARRAY(product.name,' ')) or" +
-            "  ?1 % ANY(STRING_TO_ARRAY(product.description,' ')))", nativeQuery = true)
+            " FROM product product WHERE ?1 % ANY(STRING_TO_ARRAY(product.name,' ')) or" +
+            " ?1 % ANY(STRING_TO_ARRAY(product.description,' ')))", nativeQuery = true)
     List<Article> findBySimilarName(String name, Pageable pageable);
 
     @Query(value = "SELECT * FROM article WHERE product_id IN " +
