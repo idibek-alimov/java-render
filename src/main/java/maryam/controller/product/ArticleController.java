@@ -47,6 +47,14 @@ public class ArticleController {
 
         //return articleService.searchByName(searchText,page,amount);
     }
+    @GetMapping(path="/byname/{name}/{page}/{amount}")
+    public List<Article> getListByName(@PathVariable("name")String name,
+                                                  @PathVariable("page")Integer page,
+                                                  @PathVariable("amount")Integer amount){
+        //return articleService.getListOfSimilarArticles(id,page,amount);
+        return articleService.searchSpecificName(name,page,amount);
+    }
+
     @GetMapping(path="/similar/{id}/{page}/{amount}")
     public Page<Article> getListOfSimilarArticles(@PathVariable("id")Long id,
             @PathVariable("page")Integer page,

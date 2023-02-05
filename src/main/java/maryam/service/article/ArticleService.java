@@ -82,6 +82,9 @@ public class ArticleService {
     public List<Article> searchByName(String searchText,Integer page,Integer amount){
         return articleRepository.findBySimilarName(searchText,PageRequest.of(page,amount));
     }
+    public List<Article> searchSpecificName(String name,Integer page,Integer amount){
+        return articleRepository.getByName(name,PageRequest.of(page,amount));
+    }
     public List<Article> getByUser(){
         System.out.println("2");
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
