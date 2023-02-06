@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
 //import maryam.models.inventory.Inventory;
 //import maryam.models.order.Item;
+import maryam.models.order.Item;
 import maryam.models.order.Order;
 import maryam.serializer.View;
 import maryam.service.order.OrderService;
@@ -24,7 +25,7 @@ public class OrderController {
         return orderService.orderListByUser();
     }
     @GetMapping(path="/notdelivered")
-    public List<Order> orderByUserNotDelivered(){
+    public List<Item> orderByUserNotDelivered(){
         return orderService.listOfNotDeliveredOrders();
     }
     @GetMapping(path="/delivered")

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import maryam.controller.order.ItemHolder;
 import maryam.data.order.OrderRepository;
 import maryam.data.user.UserRepository;
+import maryam.models.order.Item;
 import maryam.models.order.Order;
 import maryam.models.user.User;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,12 +73,12 @@ public class OrderService {
         }
         return null;
     }
-    public List<Order> listOfNotDeliveredOrders(){
+    public List<Item> listOfNotDeliveredOrders(){
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         if(username!="anonymousUser") {
             Long id = userRepository.findByUsername(username).getId();
 
-            return orderRepository.findByUserNotDelivered(id);
+            return orderToItemList(orderRepository.findByUserNotDelivered(id));
         }
         return null;
     }
@@ -85,5 +87,14 @@ public class OrderService {
     }
     public void removeOrder(Long id){
         orderRepository.deleteById(id);
+    }
+    private List<Item> orderToItemList(List<Order> orderList){
+        List<Item> itemList = new ArrayList<>();
+        for(Order order:orderList){
+            for(Item item:order.getItems()){
+                itemList.add(item);
+            }
+        }
+        return itemList;
     }
 }
