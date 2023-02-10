@@ -44,9 +44,13 @@ public class OrderController {
         return orderService.addOrder(items);
     }
     @PostMapping(path ="/add")
-    public Order addNewOrder(@RequestBody List<ItemHolder> items){
+    public Long addNewOrder(@RequestBody List<ItemHolder> items){
         System.out.println("came here");
-        return orderService.addOrder(items);
+        System.out.println(items);
+        Order order = orderService.addOrder(items);
+        System.out.println(order.getId());
+//        System.out.println(order.getItems().get(0));
+        return order.getId();
     }
 
     @PutMapping("/checkout/{id}")
