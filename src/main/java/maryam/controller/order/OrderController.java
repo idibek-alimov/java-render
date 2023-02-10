@@ -38,8 +38,13 @@ public class OrderController {
         return orderService.setDeliveredOrder(id);
     }
     //@JsonView(View.OnlyId.class)
-    @PostMapping(path = "")
+    @PostMapping(path ="")
     public Order addOrder(@RequestPart("items") List<ItemHolder> items){
+        System.out.println("came here");
+        return orderService.addOrder(items);
+    }
+    @PostMapping(path ="/add")
+    public Order addNewOrder(@RequestBody List<ItemHolder> items){
         System.out.println("came here");
         return orderService.addOrder(items);
     }
