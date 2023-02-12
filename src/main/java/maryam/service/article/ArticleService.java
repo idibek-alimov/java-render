@@ -125,4 +125,16 @@ public class ArticleService {
             throw new RuntimeException("fuck you " + exception);
         }
     }
+    public List<Article> getLikedArticle() throws Exception{
+        try {
+//            System.out.println("inside the service");
+            User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+//            System.out.println("the fucking user is");
+//            System.out.println(user);
+            return articleRepository.getLikedArticles(user.getId());
+        }
+        catch (Exception e){
+            throw new RuntimeException("Not authenticated exception ,bitch");
+        }
+    }
 }

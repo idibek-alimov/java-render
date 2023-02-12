@@ -26,6 +26,9 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
     @Query(value = "SELECT * FROM article WHERE product_id IN " +
             "(SELECT id FROM product WHERE name=?1)", nativeQuery = true)
     List<Article> getByName(String name,Pageable pageable);
+    @Query(value="SELECT * FROM article WHERE id IN" +
+            "(SELECT article_id FROM liked_products WHERE user_id=?1)",nativeQuery = true)
+    List<Article> getLikedArticles(Long id);
 
 
 }

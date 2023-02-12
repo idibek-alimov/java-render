@@ -74,4 +74,8 @@ public class ArticleController {
     public void deleteArticle(@PathVariable("id")Long id) throws Exception{
         articleService.deleteArticle(id);
     }
+    @GetMapping(path="/liked")
+    public List<Article> listOfLikedArticles() throws  Exception{
+        return articleService.getLikedArticle();
+    }
 }
