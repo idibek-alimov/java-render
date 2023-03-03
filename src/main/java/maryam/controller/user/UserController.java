@@ -18,6 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,6 +68,23 @@ public class UserController {
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUser roleToUser){
         userService.addRoleToUser(roleToUser.getUsername(),roleToUser.getName());
         return ResponseEntity.ok().build();
+    }
+    @PostMapping(path="/user/email/change")
+    public User emailChange(@RequestPart("email") String email){
+        return userService.changeEmail(email);
+    }
+
+    @PostMapping(path="/user/gender/change")
+    public User genderChange(@RequestPart("gender") String gender){
+        return userService.changeGender(gender);
+    }
+    @PostMapping(path = "/user/phone/change")
+    public User phoneNumberChange(@RequestPart("phone_number") String phoneNumber){
+        return userService.changePhoneNumber(phoneNumber);
+    }
+    @PostMapping(path = "/user/picture/change")
+    public User profilePicChange(@RequestPart("profile_pic") MultipartFile profilePic){
+        return userService.changeProfilePic(profilePic);
     }
 
 

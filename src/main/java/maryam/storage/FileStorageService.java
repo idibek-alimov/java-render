@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 public class FileStorageService implements FileStorageServiceInterface {
 
     private final Path root = Paths.get("uploads");
+    private final Path user_pic_path = Paths.get("user_pics");
 
     @Override
     public void init() {

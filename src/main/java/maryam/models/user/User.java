@@ -26,6 +26,7 @@ import java.util.List;
 //@JsonSerialize(using = UserSerializer.class)
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
+    public enum Gender {Male,Female};
     @Id
     @GeneratedValue(generator = "user_id_generator", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "user_id_genrator", sequenceName = "sc.user_id_generator",allocationSize=1)
@@ -36,6 +37,16 @@ public class User {
     private String username;
     private String password;
     private String name;
+
+    private String email;
+
+    private Gender gender;
+    private String profilePic;
+    @Column
+    private String phoneNumber;
+
+    private String last_name;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
