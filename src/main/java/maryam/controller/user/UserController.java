@@ -70,30 +70,30 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
     @PostMapping(path="/user/name/change")
-    public User nameChange(@RequestPart("name")String name){
+    public User nameChange(@RequestBody String name){
         return userService.changeName(name);
     }
     @PostMapping(path="/user/email/change")
-    public User emailChange(@RequestPart("email") String email){
+    public User emailChange(@RequestBody String email){
         System.out.println("received email is "+email);
         return userService.changeEmail(email);
     }
 
     @PostMapping(path="/user/gender/change")
-    public User genderChange(@RequestPart("gender") String gender){
+    public User genderChange(@RequestBody String gender){
         System.out.println(gender);
         return userService.changeGender(gender);
     }
     @PostMapping(path = "/user/phone/change")
-    public User phoneNumberChange(@RequestPart("phone_number") String phoneNumber){
+    public User phoneNumberChange(@RequestBody String phoneNumber){
         return userService.changePhoneNumber(phoneNumber);
     }
     @PostMapping(path = "/user/picture/change")
-    public User profilePicChange(@RequestPart("profile_pic") MultipartFile profilePic){
+    public User profilePicChange(@RequestBody MultipartFile profilePic){
         return userService.changeProfilePic(profilePic);
     }
     @PostMapping(path = "/user/age/change")
-    public User ageChange(@RequestPart("age") String age){
+    public User ageChange(@RequestBody String age){
         return userService.changeAge(age);
     }
 
