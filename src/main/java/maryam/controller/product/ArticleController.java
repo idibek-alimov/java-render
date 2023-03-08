@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path="/api/article")
@@ -69,6 +70,10 @@ public class ArticleController {
 //    public List<Article> getListByUserLiked(){
 //        return articleService.getByUserLiked();
 //    }
+    @GetMapping(path="/topvisit/{limit}")
+    public Set<Article> getMostVisitedArticles(@PathVariable("limit") Integer limit){
+        return articleService.getMostVisitedArticles(limit);
+    }
 
     @DeleteMapping(path = "/delete/{id}")
     public void deleteArticle(@PathVariable("id")Long id) throws Exception{

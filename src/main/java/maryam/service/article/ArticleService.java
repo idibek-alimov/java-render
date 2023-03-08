@@ -24,9 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor @Transactional
@@ -92,6 +90,14 @@ public class ArticleService {
         User user= userRepository.findByUsername(username);
         System.out.println("4");
         return articleRepository.getByUser(user.getId());
+    }
+    public Set<Article> getMostVisitedArticles(Integer limit){
+        Set<Article> articleList =  articleRepository.getMostVisitedArticles(limit);
+//        if (articleList.size()<10){
+////            Set<Article> articleSet = new HashSet<>(articleList);
+//
+//        }
+        return articleList;
     }
 
     public void deleteArticle(Long id) throws Exception {

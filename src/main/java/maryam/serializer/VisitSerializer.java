@@ -21,7 +21,7 @@ public class VisitSerializer extends StdSerializer<Visit> {
         throws IOException, JsonProcessingException{
         jgen.writeStartObject();
         jgen.writeNumberField("id",visit.getId());
-        jgen.writeNumberField("product",visit.getProduct().getId());
+        jgen.writeNumberField("product",visit.getArticle().getId());
         jgen.writeNumberField("user",visit.getUser().getId());
         jgen.writeObjectField("createdAt",visit.getCreatedAt());
         jgen.writeEndObject();

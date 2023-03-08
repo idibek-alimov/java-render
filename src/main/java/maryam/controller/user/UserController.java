@@ -69,13 +69,19 @@ public class UserController {
         userService.addRoleToUser(roleToUser.getUsername(),roleToUser.getName());
         return ResponseEntity.ok().build();
     }
+    @PostMapping(path="/user/name/change")
+    public User nameChange(@RequestPart("name")String name){
+        return userService.changeName(name);
+    }
     @PostMapping(path="/user/email/change")
     public User emailChange(@RequestPart("email") String email){
+        System.out.println("received email is "+email);
         return userService.changeEmail(email);
     }
 
     @PostMapping(path="/user/gender/change")
     public User genderChange(@RequestPart("gender") String gender){
+        System.out.println(gender);
         return userService.changeGender(gender);
     }
     @PostMapping(path = "/user/phone/change")
@@ -85,6 +91,10 @@ public class UserController {
     @PostMapping(path = "/user/picture/change")
     public User profilePicChange(@RequestPart("profile_pic") MultipartFile profilePic){
         return userService.changeProfilePic(profilePic);
+    }
+    @PostMapping(path = "/user/age/change")
+    public User ageChange(@RequestPart("age") String age){
+        return userService.changeAge(age);
     }
 
 

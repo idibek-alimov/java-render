@@ -70,27 +70,43 @@ public class UserService implements UserServiceInterface, UserDetailsService {
     public List<User> getUsers(){
         return (List<User>) userRepository.findAll();
     }
-
-    public User changeEmail(String email){
+    public User changeName(String name){
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         User user = userRepository.findByUsername(username);
+        user.setName(name);
+        userRepository.save(user);
+        return user;
+    }
+
+    public User changeEmail(String email){
+        System.out.println(1);
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        System.out.println(2);
+        User user = userRepository.findByUsername(username);
+        System.out.println(3);
         user.setEmail(email);
+        System.out.println(4);
+        userRepository.save(user);
+        System.out.println(5);
         return user;
     }
     public User changeGender(String gender){
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         User user = userRepository.findByUsername(username);
-        if(gender == "male"){
+
+        if(gender.equals("male")){
             user.setGender(User.Gender.Male);
-        } else if (gender == "female") {
+        } else if (gender.equals("female")) {
             user.setGender(User.Gender.Female);
         }
+        userRepository.save(user);
         return user;
     }
     public User changePhoneNumber(String phoneNumber){
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         User user = userRepository.findByUsername(username);
         user.setPhoneNumber(phoneNumber);
+        userRepository.save(user);
         return user;
     }
     public User changeProfilePic(MultipartFile profilePic){
@@ -98,6 +114,14 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         User user = userRepository.findByUsername(username);
         String picName = storageService.save(profilePic);
         user.setProfilePic(picName);
+        userRepository.save(user);
+        return user;
+    }
+    public User changeAge(String age){
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        User user = userRepository.findByUsername(username);
+        user.setAge(Integer.parseInt(age));
+        userRepository.save(user);
         return user;
     }
 

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ArticleRepository extends JpaRepository<Article,Long> {
     public List<Article> findByProductId(Long id);
@@ -30,5 +31,8 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
             "(SELECT article_id FROM liked_products WHERE user_id=?1)",nativeQuery = true)
     List<Article> getLikedArticles(Long id);
 
+    @Query(value="SELECT * FROM article WHERE id IN" +
+            "(SELECT article_id FROM visit GROUP BY article_id ORDER BY COUNT(article_id) DESC LIMIT ?1)",nativeQuery = true)
+    Set<Article> getMostVisitedArticles(Integer limit);
 
 }

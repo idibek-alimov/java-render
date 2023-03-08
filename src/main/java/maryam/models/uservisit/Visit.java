@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import maryam.models.product.Article;
 import maryam.models.product.Product;
 import maryam.models.user.User;
 import maryam.serializer.ProductSerializer;
@@ -31,18 +32,18 @@ public class Visit {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
 //    @JsonIgnoreProperties({"category","name","user","description","price","pictures","inventory"})
-    public Product product;
-
+    //public Product product;
+    private Article article;
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     @ManyToOne
-    public User user;
-
+    //public User user;
+    private User user;
     private Date createdAt;
 
-    public Visit(User user,Product product){
+    public Visit(User user,Article article){
         this.user = user;
-        this.product = product;
+        this.article = article;
     }
 
 

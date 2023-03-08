@@ -185,8 +185,8 @@ public class ProductService implements ProductServiceInterface{
         Set<Long> tag_Ids = new HashSet<>();
         Set<Long> visitedProductsId = new HashSet<>();
         for (Visit visit:visits){
-            visitedProductsId.add(visit.getProduct().getId());
-            for(Tag tag:visit.getProduct().getTags()) {
+            visitedProductsId.add(visit.getArticle().getId());
+            for(Tag tag:visit.getArticle().getProduct().getTags()) {
                 tag_Ids.add(tag.getId());
             }
         }

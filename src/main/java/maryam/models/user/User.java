@@ -29,7 +29,7 @@ public class User {
     public enum Gender {Male,Female};
     @Id
     @GeneratedValue(generator = "user_id_generator", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "user_id_genrator", sequenceName = "sc.user_id_generator",allocationSize=1)
+    @SequenceGenerator(name = "user_id_generator", sequenceName = "sc.user_id_generator",allocationSize=1)
     @Column(unique=true, nullable=false)
     private Long id;
 
@@ -42,10 +42,11 @@ public class User {
 
     private Gender gender;
     private String profilePic;
-    @Column
-    private String phoneNumber;
 
-    private String last_name;
+    private String phoneNumber;
+    private Integer age;
+
+    //private String last_name;
 
 
     @ManyToMany(fetch = FetchType.EAGER)
