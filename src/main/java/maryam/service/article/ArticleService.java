@@ -17,6 +17,7 @@ import maryam.service.color.ColorService;
 import maryam.service.inventory.InventoryService;
 import maryam.service.picture.PictureService;
 import maryam.service.product.ProductService;
+import maryam.service.visit.VisitService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +39,7 @@ public class ArticleService {
     private final LikeRepository likeRepository;
     private final ItemRepository itemRepository;
     private final ProductRepository productRepository;
+    private final VisitService visitService;
     public Article addArticle(List<Inventory> inventories, List<MultipartFile> pictures, Color color, Product product){
         System.out.println("article");
         Article article = articleRepository.save(new Article(product));
@@ -71,6 +73,11 @@ public class ArticleService {
     }
 
     public Optional<Article> getArticle(Long id){
+        String user = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        if(user!="anonymousUser"){
+            //System.out.println("hello there . General Kenobe");
+            visitService.addVisit(id);
+        }
         return articleRepository.findById(id);
     }
     public List<Article> getArticlesInProduct(Long id){
