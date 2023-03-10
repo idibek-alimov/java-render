@@ -10,8 +10,12 @@ import lombok.RequiredArgsConstructor;
 import maryam.models.role.Role;
 import maryam.models.user.User;
 import maryam.models.uservisit.Visit;
+import maryam.service.mail.EmailSenderService;
 import maryam.service.user.UserService;
 import maryam.service.visit.UserVisitService;
+import maryam.types.Email;
+import maryam.types.EmailVerifyType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,6 +44,8 @@ public class UserController {
     private final UserService userService;
     private final UserVisitService userVisitService;
 
+    @Autowired
+    private EmailSenderService emailSenderService;
     @GetMapping(path="/users")
     public ResponseEntity<List<User>> getUsers(){
         //System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
@@ -56,7 +62,10 @@ public class UserController {
     public ResponseEntity<User> saveUser(@RequestBody User user){
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
         User createdUser = userService.saveUser(user);
+        System.out.println("1");
         userVisitService.createUserVisits(user);
+        System.out.println("2");
+        userService.sendVerificationEmail(createdUser.getEmail());
         return ResponseEntity.created(uri).body(createdUser);
     }
     @PostMapping(path = "/role/save")
@@ -75,8 +84,12 @@ public class UserController {
     }
     @PostMapping(path="/user/email/change")
     public User emailChange(@RequestBody String email){
-        System.out.println("received email is "+email);
+     //   System.out.println("received email is "+email);
         return userService.changeEmail(email);
+    }
+    @PostMapping(path="/user/email/verify")
+    public User emailVerify(@RequestBody EmailVerifyType emailVerify) throws  Exception{
+       return userService.completeVerification(emailVerify.getEmail(),emailVerify.getCode());
     }
 
     @PostMapping(path="/user/gender/change")
@@ -95,6 +108,13 @@ public class UserController {
     @PostMapping(path = "/user/age/change")
     public User ageChange(@RequestBody String age){
         return userService.changeAge(age);
+    }
+
+    @PostMapping(path="/user/email/send")
+    public void sendEmail(@RequestBody Email email){
+        System.out.println(email);
+        emailSenderService.sendMail(email.getToEmail(),email.getSubject(),email.getBody());
+        System.out.println("mail send i gues");
     }
 
 

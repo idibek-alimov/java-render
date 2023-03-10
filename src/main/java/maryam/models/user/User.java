@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 //import maryam.models.order.Order;
@@ -29,7 +30,7 @@ public class User {
     public enum Gender {Male,Female};
     @Id
     @GeneratedValue(generator = "user_id_generator", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "user_id_generator", sequenceName = "sc.user_id_generator",allocationSize=1)
+    @SequenceGenerator(name = "user_id_generator", sequenceName = "User_id_generator",allocationSize=1)
     @Column(unique=true, nullable=false)
     private Long id;
 
@@ -38,8 +39,12 @@ public class User {
     private String password;
     private String name;
 
+    @Column(unique = true)
     private String email;
 
+
+
+    private Boolean active = false;
     private Gender gender;
     private String profilePic;
 

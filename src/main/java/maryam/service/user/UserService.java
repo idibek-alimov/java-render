@@ -3,8 +3,11 @@ package maryam.service.user;
 import lombok.RequiredArgsConstructor;
 import maryam.data.role.RoleRepository;
 import maryam.data.user.UserRepository;
+import maryam.data.user.VerificationCodeRepository;
 import maryam.models.role.Role;
 import maryam.models.user.User;
+import maryam.models.user.VerificationCode;
+import maryam.service.mail.EmailSenderService;
 import maryam.storage.FileStorageService;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,9 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 
 @Service @RequiredArgsConstructor @Transactional
@@ -28,6 +29,8 @@ public class UserService implements UserServiceInterface, UserDetailsService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final FileStorageService storageService;
+    private final EmailSenderService emailSenderService;
+    private final VerificationCodeRepository verificationCodeRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -125,4 +128,42 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         return user;
     }
 
+    public void sendVerificationEmail(String email){
+//        System.out.println(11);
+        User user = userRepository.findByEmail(email);
+//        System.out.println(12);
+        Integer code = new Random().nextInt(900000) + 100000;
+//        System.out.println(13);
+        Optional<VerificationCode> verificationCodeOptional = verificationCodeRepository.findByUser(user);
+//        System.out.println(14);
+        if(verificationCodeOptional.isPresent()){
+//            System.out.println(15);
+            VerificationCode verificationCode = verificationCodeOptional.get();
+//            System.out.println(16);
+            verificationCode.setCode(code);
+//            System.out.println(17);
+        }
+        else {
+//            System.out.println(18);
+            VerificationCode verificationCode = verificationCodeRepository.save(new VerificationCode(code,user));
+//            System.out.println(19);
+        }
+//        System.out.println(20);
+        emailSenderService.sendMail(email,
+                "Verifying your email",
+                "Your verification code is "+code+". Please do not give this code to anybody else");
+//        System.out.println(21);
+    }
+    public User completeVerification(String email,Integer code) throws Exception{
+        User user  = userRepository.findByEmail(email);
+        VerificationCode verificationCode = verificationCodeRepository.findByUser(user).get();
+        if (code.equals(verificationCode.getCode())){
+            user.setActive(true);
+        }
+        else {
+            throw new RuntimeException("Wrong code your email is not verified try agin ");
+        }
+        verificationCodeRepository.delete(verificationCode);
+        return user;
+    }
 }
