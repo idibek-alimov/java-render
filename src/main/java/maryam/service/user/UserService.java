@@ -82,15 +82,16 @@ public class UserService implements UserServiceInterface, UserDetailsService {
     }
 
     public User changeEmail(String email){
-        System.out.println(1);
+//        System.out.println(1);
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        System.out.println(2);
+//        System.out.println(2);
         User user = userRepository.findByUsername(username);
-        System.out.println(3);
+//        System.out.println(3);
         user.setEmail(email);
-        System.out.println(4);
+        user.setActive(false);
+//        System.out.println(4);
         userRepository.save(user);
-        System.out.println(5);
+//        System.out.println(5);
         return user;
     }
     public User changeGender(String gender){
