@@ -15,6 +15,8 @@ import maryam.service.user.UserService;
 import maryam.service.visit.UserVisitService;
 import maryam.types.Email;
 import maryam.types.EmailVerifyType;
+import maryam.types.TextInteger;
+import maryam.types.TextString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -79,13 +81,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
     @PostMapping(path="/user/name/change")
-    public User nameChange(@RequestBody String name){
-        return userService.changeName(name);
+    public User nameChange(@RequestBody TextString name){
+        return userService.changeName(name.getText()
+        );
     }
     @PostMapping(path="/user/email/change")
-    public User emailChange(@RequestBody String email){
+    public User emailChange(@RequestBody TextString email){
      //   System.out.println("received email is "+email);
-        return userService.changeEmail(email);
+        return userService.changeEmail(email.getText());
     }
     @PostMapping(path="/user/email/verify")
     public User emailVerify(@RequestBody EmailVerifyType emailVerify) throws  Exception{
@@ -93,21 +96,21 @@ public class UserController {
     }
 
     @PostMapping(path="/user/gender/change")
-    public User genderChange(@RequestBody String gender){
-        System.out.println(gender);
-        return userService.changeGender(gender);
+    public User genderChange(@RequestBody TextString gender){
+        System.out.println(gender.getText());
+        return userService.changeGender(gender.getText());
     }
     @PostMapping(path = "/user/phone/change")
-    public User phoneNumberChange(@RequestBody String phoneNumber){
-        return userService.changePhoneNumber(phoneNumber);
+    public User phoneNumberChange(@RequestBody TextString phoneNumber){
+        return userService.changePhoneNumber(phoneNumber.getText());
     }
     @PostMapping(path = "/user/picture/change")
     public User profilePicChange(@RequestBody MultipartFile profilePic){
         return userService.changeProfilePic(profilePic);
     }
     @PostMapping(path = "/user/age/change")
-    public User ageChange(@RequestBody String age){
-        return userService.changeAge(age);
+    public User ageChange(@RequestBody TextString age){
+        return userService.changeAge(age.getText());
     }
 
     @PostMapping(path="/user/email/send")
