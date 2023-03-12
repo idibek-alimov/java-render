@@ -54,11 +54,11 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getUsers());
     }
     @GetMapping(path="/currentuser")
-    public ResponseEntity<User> getUser(){
+    public User getUser(){
         System.out.println("inside getuser");
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         System.out.println(username);
-        return ResponseEntity.ok().body(userService.getUser(username));
+        return userService.getUser(username);
     }
     @PostMapping(path = "/user/save")
     public ResponseEntity<User> saveUser(@RequestBody User user){
