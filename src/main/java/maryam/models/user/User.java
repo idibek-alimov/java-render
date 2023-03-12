@@ -27,7 +27,7 @@ import java.util.List;
 //@JsonSerialize(using = UserSerializer.class)
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
-    public enum Gender {Male,Female};
+    public  enum Gender {Male,Female};
     @Id
     @GeneratedValue(generator = "user_id_generator", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "user_id_generator", sequenceName = "User_id_generator",allocationSize=1)

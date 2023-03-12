@@ -9,6 +9,7 @@ import maryam.models.user.User;
 import maryam.models.user.VerificationCode;
 import maryam.service.mail.EmailSenderService;
 import maryam.storage.FileStorageService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -94,16 +95,30 @@ public class UserService implements UserServiceInterface, UserDetailsService {
 //        System.out.println(5);
         return user;
     }
-    public User changeGender(String gender){
+    public User changeGender(@NotNull String gender){
+        System.out.println("gender received in user service  "+gender.toString());
+        System.out.println("it is male  "+gender.equals("male"));
+        System.out.println("it is female  "+gender.equals("female"));
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        System.out.println(username);
+        System.out.println(1);
         User user = userRepository.findByUsername(username);
-
-        if(gender.equals("male")){
+        System.out.println(user);
+        System.out.println(2);
+        if(gender.toLowerCase().equals("male")){
+            System.out.println(3);
             user.setGender(User.Gender.Male);
-        } else if (gender.equals("female")) {
+            System.out.println(4);
+        } else if (gender.toLowerCase().equals("female")) {
+            System.out.println(5);
+            System.out.println(User.Gender.valueOf("Male"));
+            System.out.println(User.Gender.Male);
             user.setGender(User.Gender.Female);
+            System.out.println(6);
         }
+        System.out.println(7);
         userRepository.save(user);
+        System.out.println(8);
         return user;
     }
     public User changePhoneNumber(String phoneNumber){
