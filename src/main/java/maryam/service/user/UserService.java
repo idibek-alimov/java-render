@@ -90,6 +90,7 @@ public class UserService implements UserServiceInterface, UserDetailsService {
 //        System.out.println(3);
         user.setEmail(email);
         user.setActive(false);
+        sendVerificationEmail(email);
 //        System.out.println(4);
         userRepository.save(user);
 //        System.out.println(5);
