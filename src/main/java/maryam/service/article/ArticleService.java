@@ -98,8 +98,10 @@ public class ArticleService {
         System.out.println("4");
         return articleRepository.getByUser(user.getId());
     }
-    public Set<Article> getMostVisitedArticles(Integer limit){
-        Set<Article> articleList =  articleRepository.getMostVisitedArticles(limit);
+    public List<Article> getMostVisitedArticles(Integer limit){
+        //System.out.println(articleRepository.getMostCommonVisits(limit));
+        System.out.println(articleRepository.getMostVisitedArticles(limit).size());
+        List<Article> articleList =  articleRepository.getMostVisitedArticles(limit);
 //        if (articleList.size()<10){
 ////            Set<Article> articleSet = new HashSet<>(articleList);
 //

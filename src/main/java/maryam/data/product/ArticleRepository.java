@@ -31,8 +31,11 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
             "(SELECT article_id FROM liked_products WHERE user_id=?1)",nativeQuery = true)
     List<Article> getLikedArticles(Long id);
 
-    @Query(value="SELECT * FROM article WHERE id IN" +
-            "(SELECT article_id FROM visit GROUP BY article_id ORDER BY COUNT(article_id) DESC LIMIT ?1)",nativeQuery = true)
-    Set<Article> getMostVisitedArticles(Integer limit);
+//    @Query(value="SELECT c.* FROM article c JOIN unnest(CAST((SELECT article_id FROM visit GROUP BY article_id ORDER BY COUNT(article_id) DESC) AS int)) WITH ORDINALITY t(id,ord) USING (id) ORDER BY t.ord",nativeQuery = true)
+//    Set<Article> getMostVisitedArticles(Set<Long> visitIdList);
+    @Query(value="SELECT article.id,article.color_id,article.product_id FROM article INNER JOIN visit ON article.id = visit.article_id GROUP BY article.id ORDER BY COUNT(article.id) DESC",nativeQuery = true)//GROUP BY article.id ORDER BY COUNT(article.id) DESC LIMIT ?1
+    List<Article> getMostVisitedArticles(Integer limit);
+//    @Query(value="SELECT article_id FROM visit GROUP BY article_id ORDER BY COUNT(article_id) DESC LIMIT ?1",nativeQuery = true)
+//    Set<Long> getMostCommonVisits(Integer limit);
 
 }

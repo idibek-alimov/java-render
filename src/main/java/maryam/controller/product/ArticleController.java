@@ -71,7 +71,7 @@ public class ArticleController {
 //        return articleService.getByUserLiked();
 //    }
     @GetMapping(path="/topvisit/{limit}")
-    public Set<Article> getMostVisitedArticles(@PathVariable("limit") Integer limit){
+    public List<Article> getMostVisitedArticles(@PathVariable("limit") Integer limit){
         return articleService.getMostVisitedArticles(limit);
     }
 
