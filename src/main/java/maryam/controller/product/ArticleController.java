@@ -74,6 +74,11 @@ public class ArticleController {
     public List<Article> getMostVisitedArticles(@PathVariable("limit") Integer limit){
         return articleService.getMostVisitedArticles(limit);
     }
+    @GetMapping(path="/topvisit/recent/{limit}")
+    public List<Article> getMostRecentVisitedArticles(@PathVariable("limit") Integer limit){
+        return articleService.getMOstRecentVisitedArticles(limit);
+    }
+
 
     @DeleteMapping(path = "/delete/{id}")
     public void deleteArticle(@PathVariable("id")Long id) throws Exception{

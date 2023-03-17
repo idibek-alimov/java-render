@@ -33,8 +33,13 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
 
 //    @Query(value="SELECT c.* FROM article c JOIN unnest(CAST((SELECT article_id FROM visit GROUP BY article_id ORDER BY COUNT(article_id) DESC) AS int)) WITH ORDINALITY t(id,ord) USING (id) ORDER BY t.ord",nativeQuery = true)
 //    Set<Article> getMostVisitedArticles(Set<Long> visitIdList);
-    @Query(value="SELECT article.id,article.color_id,article.product_id FROM article INNER JOIN visit ON article.id = visit.article_id GROUP BY article.id ORDER BY COUNT(article.id) DESC",nativeQuery = true)//GROUP BY article.id ORDER BY COUNT(article.id) DESC LIMIT ?1
+    @Query(value="SELECT article.id,article.color_id,article.product_id FROM article INNER JOIN visit ON article.id = visit.article_id GROUP BY article.id ORDER BY COUNT(article.id) DESC LIMIT ?1",nativeQuery = true)//GROUP BY article.id ORDER BY COUNT(article.id) DESC LIMIT ?1
     List<Article> getMostVisitedArticles(Integer limit);
+
+    @Query(value="SELECT id,color_id,product_id FROM (SELECT article.id as id,article.color_id as color_id,article.product_id as product_id,MAX(visit.created_at) FROM article " +
+            "INNER JOIN visit ON article.id = visit.article_id GROUP BY article.id ORDER BY COUNT(article.id) DESC," +
+            "MAX(visit.created_at) DESC) as article LIMIT ?1",nativeQuery = true)
+    List<Article> getMostRecentVisitedArticles(Integer limit);
 //    @Query(value="SELECT article_id FROM visit GROUP BY article_id ORDER BY COUNT(article_id) DESC LIMIT ?1",nativeQuery = true)
 //    Set<Long> getMostCommonVisits(Integer limit);
 

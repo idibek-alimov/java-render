@@ -99,14 +99,12 @@ public class ArticleService {
         return articleRepository.getByUser(user.getId());
     }
     public List<Article> getMostVisitedArticles(Integer limit){
-        //System.out.println(articleRepository.getMostCommonVisits(limit));
         System.out.println(articleRepository.getMostVisitedArticles(limit).size());
         List<Article> articleList =  articleRepository.getMostVisitedArticles(limit);
-//        if (articleList.size()<10){
-////            Set<Article> articleSet = new HashSet<>(articleList);
-//
-//        }
         return articleList;
+    }
+    public List<Article> getMOstRecentVisitedArticles(Integer limit){
+        return articleRepository.getMostRecentVisitedArticles(limit);
     }
 
     public void deleteArticle(Long id) throws Exception {
