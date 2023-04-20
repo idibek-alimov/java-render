@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import maryam.models.inventory.Inventory;
 import maryam.models.picture.Picture;
 import maryam.models.product.Article;
+//import maryam.models.product.Brand;
 import maryam.models.product.Product;
 import maryam.service.like.LikeService;
 import maryam.storage.FileStorageService;
@@ -37,34 +38,20 @@ public class ProductSerializer extends StdSerializer<Product> {
         throws IOException, JsonProcessingException{
         jgen.writeStartObject();
         jgen.writeNumberField("id",product.getId());
-//        jgen.writeObjectField("category",product.getCategory());
+        jgen.writeObjectField("category",product.getCategory());
         jgen.writeStringField("name",product.getName());
-        jgen.writeNumberField("user",product.getUser().getId());
-        //jgen.writeNumberField("price",product.getPrice());
-//        jgen.writeBooleanField("likes",likeService.check_like(product.getId()));
+        jgen.writeStringField("brand",product.getBrand());
+        if (product.getProductGender()!=null){
+            jgen.writeObjectField("productGender",product.getProductGender());
+        }
+        //jgen.writeObjectField("user",product.getUser());
         jgen.writeStringField("description",product.getDescription());
         jgen.writeArrayFieldStart("articles");
-        for(Article article:product.getArticles()){
+        for(Article article:product.getArticles()) {
             jgen.writeObject(article);
         }
         jgen.writeEndArray();
-//        jgen.writeObjectField("id",product.getArticles().get(0));
-//        jgen.writeArrayFieldStart("articles");
-//        for(Article article:product.getArticles()){
-//            jgen.writeNumberField("article_id",article.getId());
-////            jgen.writeStringField("color",article.getColor().getName());
-//        }
-//        jgen.writeEndArray();
-//        jgen.writeArrayFieldStart("pics");
-//        for (Picture pic: product.getArticles()){
-//            jgen.writeObject(fileStorageService.load(pic.getName()).getURL());
-//        }
-//        jgen.writeEndArray();
-//        jgen.writeArrayFieldStart("inventory");
-//        for(Inventory inventory: product.getInventory()){
-//            jgen.writeObject(inventory);
-//        }
-//        jgen.writeEndArray();
+        jgen.writeObjectField("dimensions",product.getDimensions());
         jgen.writeEndObject();
     }
 

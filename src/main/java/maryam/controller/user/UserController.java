@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import maryam.models.role.Role;
+import maryam.models.user.SellerProperties;
 import maryam.models.user.User;
 import maryam.models.uservisit.Visit;
 import maryam.service.mail.EmailSenderService;
@@ -40,7 +41,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -48,78 +49,89 @@ public class UserController {
 
     @Autowired
     private EmailSenderService emailSenderService;
-    @GetMapping(path="/users")
-    public ResponseEntity<List<User>> getUsers(){
-        //System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return ResponseEntity.ok().body(userService.getUsers());
-    }
-    @GetMapping(path="/currentuser")
+//    @GetMapping(path="/users")
+//    public ResponseEntity<List<User>> getUsers(){
+//        //System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+//        return ResponseEntity.ok().body(userService.getUsers());
+//    }
+    @GetMapping(path="/current")
     public User getUser(){
-        System.out.println("inside getuser");
-        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        System.out.println(username);
-        return userService.getUser(username);
+        //System.out.println("inside getuser");
+        //String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        //System.out.println(username);
+        return userService.getCurrentUser();
     }
-    @PostMapping(path = "/user/save")
+    @PostMapping(path = "/save")
     public ResponseEntity<User> saveUser(@RequestBody User user){
+//        System.out.println("user received");
+//        System.out.println(user);
+
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
         User createdUser = userService.saveUser(user);
-        System.out.println("1");
-        userVisitService.createUserVisits(user);
-        System.out.println("2");
-        userService.sendVerificationEmail(createdUser.getEmail());
+//        System.out.println("user saved");
+//        System.out.println("1");
+//        userVisitService.createUserVisits(user);
+//        System.out.println("2");
+        //userService.sendVerificationEmail(createdUser.getEmail());
         return ResponseEntity.created(uri).body(createdUser);
     }
-    @PostMapping(path = "/role/save")
-    public ResponseEntity<Role> saveRole(@RequestBody Role role){
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
-        return ResponseEntity.created(uri).body(userService.saveRole(role));
-    }
-    @PostMapping(path = "/user/addrole")
-    public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUser roleToUser){
-        userService.addRoleToUser(roleToUser.getUsername(),roleToUser.getName());
-        return ResponseEntity.ok().build();
-    }
-    @PostMapping(path="/user/name/change")
+//    @PostMapping(path = "/role/save")
+//    public ResponseEntity<Role> saveRole(@RequestBody Role role){
+//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
+//        return ResponseEntity.created(uri).body(userService.saveRole(role));
+//    }
+//    @PostMapping(path = "/role/add")
+//    public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUser roleToUser){
+//        userService.addRoleToUser(roleToUser.getUsername(),roleToUser.getName());
+//        return ResponseEntity.ok().build();
+//    }
+    @PostMapping(path="/name/change")
     public User nameChange(@RequestBody TextString name){
         return userService.changeName(name.getText()
         );
     }
-    @PostMapping(path="/user/email/change")
+    @PostMapping(path="/email/change")
     public User emailChange(@RequestBody TextString email){
      //   System.out.println("received email is "+email);
         return userService.changeEmail(email.getText());
     }
-    @PostMapping(path="/user/email/verify")
+    @PostMapping(path="/email/verify")
     public User emailVerify(@RequestBody EmailVerifyType emailVerify) throws  Exception{
        return userService.completeVerification(emailVerify.getEmail(),emailVerify.getCode());
     }
 
-    @PostMapping(path="/user/gender/change")
+    @PostMapping(path="/gender/change")
     public User genderChange(@RequestBody TextString gender){
         System.out.println(gender.getText());
         return userService.changeGender(gender.getText());
     }
-    @PostMapping(path = "/user/phone/change")
+    @PostMapping(path = "/phone/change")
     public User phoneNumberChange(@RequestBody TextString phoneNumber){
         return userService.changePhoneNumber(phoneNumber.getText());
     }
-    @PostMapping(path = "/user/picture/change")
+    @PostMapping(path = "/picture/change")
     public User profilePicChange(@RequestBody MultipartFile profilePic){
         return userService.changeProfilePic(profilePic);
     }
-    @PostMapping(path = "/user/age/change")
+    @PostMapping(path = "/age/change")
     public User ageChange(@RequestBody TextString age){
         return userService.changeAge(age.getText());
     }
 
-    @PostMapping(path="/user/email/send")
+    @PostMapping(path="/email/send")
     public void sendEmail(@RequestBody Email email){
         System.out.println(email);
         emailSenderService.sendMail(email.getToEmail(),email.getSubject(),email.getBody());
         System.out.println("mail send i gues");
     }
-
+    @GetMapping(path = "/upgrade/to/seller")
+    public User upgradeToSeller(){
+        return userService.upgradeToSeller();
+    }
+    @GetMapping(path = "/seller/properties")
+    public SellerProperties getSellerProperties(){
+        return userService.getCurrentUser().getSellerProperties();
+    }
 
 //    @GetMapping(path = "/role/{id}")
 //    public ResponseEntity<User> getUser(@RequestParam() Long id){

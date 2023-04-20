@@ -13,6 +13,7 @@ import maryam.serializer.ProductSerializer;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -21,12 +22,14 @@ import java.util.List;
 @NoArgsConstructor
 @JsonSerialize(using= ArticleSerializer.class)
 public class Article {
+    public  enum Status {NoPicture,Active,Removable,Deleted};
     @Id
     @GeneratedValue(generator = "article_id_generator", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "article_id_generator", sequenceName = "Article_id_generator",allocationSize=1)
     private Long id;
 
-//    private Integer identifier;
+
+    private Status status;
 
     @JsonBackReference
     @ManyToOne
@@ -35,12 +38,14 @@ public class Article {
     @ManyToOne
     private Color color;
 
+    private String sellerArticle;
+
     @JsonManagedReference
     @Column(name = "pictures")
     @OneToMany(
             mappedBy = "article",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = CascadeType.ALL
+            //orphanRemoval = true
     )
     private List<Inventory> inventory = new ArrayList<>();
 
@@ -48,13 +53,33 @@ public class Article {
     @Column(name="pictures")
     @OneToMany(
             mappedBy = "article",
+            cascade = CascadeType.ALL
+//            orphanRemoval = true
+    )
+    private List<Picture> pictures = new ArrayList<>();
+    @Column
+    private Date createdAt;
+
+
+
+    @JsonManagedReference
+    @Column
+    @OneToMany(
+            mappedBy = "article",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Picture> pictures = new ArrayList<>();
-
+    private List<Discount> discounts = new ArrayList<>();
     public Article(Product product){
         this.product = product;
     }
-
+    public Article(Product product,String sellerArticle){
+        this.product = product;
+        this.sellerArticle = sellerArticle;
+    }
+    @Column
+    @PrePersist
+    void createdAt(){
+        this.createdAt = new Date();
+    }
 }

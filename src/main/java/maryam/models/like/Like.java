@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="liked_products")
+@Table(name="liked_articles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

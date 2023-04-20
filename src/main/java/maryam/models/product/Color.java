@@ -21,10 +21,9 @@ public class Color {
     @GeneratedValue(generator = "color_id_generator", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "color_id_generator", sequenceName = "Color_id_generator",allocationSize=1)
     private Long id;
+
+    @Column(unique = true)
     private String name;
 
-//    @JsonBackReference
-//    @OneToMany
-//    private Article article;
 
 }

@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import maryam.models.category.Category;
-import maryam.models.inventory.Inventory;
-import maryam.models.picture.Picture;
 import maryam.models.tag.Tag;
 import maryam.models.user.User;
 import maryam.serializer.ProductSerializer;
@@ -28,7 +26,7 @@ import java.util.List;
 //@JsonView(ProductSerializer.class)
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Product implements Comparable<Product>{
-
+    public  enum Gender {Male,Female};
     @Id
     @GeneratedValue(generator = "product_id_generator", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "product_id_generator",initialValue = 1, allocationSize = 1,sequenceName = "Product_id_generator")
@@ -43,6 +41,8 @@ public class Product implements Comparable<Product>{
 
     //@JsonView(View.Detailed.class)
     private String name;
+    private String brand;
+
 
     //@JsonView(View.Detailed.class)
     @ManyToOne
@@ -52,35 +52,14 @@ public class Product implements Comparable<Product>{
 //    @JsonIdentityReference(alwaysAsId = true)
     private User user;
 
-//    @JsonManagedReference
-//    @OneToMany
-//    private Article article;
+    @OneToOne(mappedBy = "product")
+    private Dimensions dimensions;
 
-    //@JsonView(View.Detailed.class)
+    @ManyToOne
+    private ProductGender productGender;
+
     private String description;
 
-    //@JsonView(View.Detailed.class)
-//    private Double price;
-
-//    @JsonManagedReference
-//    @Column(name="pictures")
-//    @OneToMany(
-//            mappedBy = "product",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true
-//    )
-//
-//    private List<Picture> pictures = new ArrayList<>();
-
-
-//    @JsonManagedReference
-//    @Column(name = "pictures")
-//    @OneToMany(
-//            mappedBy = "product",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true
-//    )
-//    private List<Inventory> inventory = new ArrayList<>();
     @Column
     private Date createdAt;
 
@@ -102,9 +81,18 @@ public class Product implements Comparable<Product>{
     @ManyToMany(mappedBy = "products")
     private List<Tag> tags = new ArrayList<>();
 
+//    @ManyToMany(mappedBy = "products")
+//    private List<Brand> brands = new ArrayList<>();
+
 
     public Product(String name){
         this.name = name;
+    }
+    public Product(String name,String description,String brand,User user) {
+        this.name = name;
+        this.description = description;
+        this.brand = brand;
+        this.user = user;
     }
 
     public List<Tag> addTag(Tag tag){

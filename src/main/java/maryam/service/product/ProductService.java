@@ -1,144 +1,221 @@
 package maryam.service.product;
 
 import lombok.RequiredArgsConstructor;
-import maryam.controller.product.CreateArticleHolder;
-import maryam.controller.product.PictureHolder;
 import maryam.data.product.ProductRepository;
-import maryam.data.user.UserRepository;
-import maryam.models.inventory.Inventory;
-import maryam.models.picture.Picture;
-import maryam.models.product.Color;
-import maryam.models.product.Product;
+import maryam.dto.inventory.InventoryDTO;
+import maryam.models.category.Category;
+import maryam.models.product.*;
 import maryam.models.tag.Tag;
 import maryam.models.user.User;
 import maryam.models.uservisit.Visit;
 import maryam.service.article.ArticleService;
-import maryam.service.inventory.InventoryService;
-import maryam.service.picture.PictureService;
+import maryam.service.article.DiscountService;
+import maryam.service.category.CategoryService;
 import maryam.service.tag.TagService;
+import maryam.service.user.UserService;
 import maryam.service.visit.VisitService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.util.*;
-import com.google.common.collect.Iterables;
 
 @Service @RequiredArgsConstructor @Transactional
 public class ProductService implements ProductServiceInterface{
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
-    private final PictureService pictureService;
-    private final InventoryService inventoryService;
+    private final UserService userService;
     private final VisitService visitService;
     private final TagService tagService;
     private final ArticleService articleService;
-    public Product addProduct(Product product,
-                              List<Inventory> inventories,
-                              Color color,
-                              List<MultipartFile> pictures,
-                              List<Tag> tags)  {
-        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        if(user == null){
-            throw new RuntimeException("the fucking user is not found");
-        }
-        product.setUser(user);
-        Product createdProduct = productRepository.save(product);
-        System.out.println("before add article");
-        createdProduct.addArticle(articleService.addArticle(inventories,pictures,color,createdProduct));
-        System.out.println("after add article");
-        //        List<Inventory> createdInventories = inventoryService.addInventories(inventories,createdProduct);
-//        List<Picture> createdPictures = pictureService.addPictures(pictures,createdProduct);
-//        createdProduct.setPictures(createdPictures);
-//        createdProduct.setInventory(createdInventories);
-        tagService.addTagToProduct(createdProduct,tags);
+    private final CategoryService categoryService;
+    private final DimentsionsService dimentsionsService;
+    private final ProductGenderService productGenderService;
+    private final DiscountService discountService;
 
-        return createdProduct;
-    }
-    public Product addProduct(Product product,
-                              List<Tag> tags,
-                              List<CreateArticleHolder> articleHolders,
-                                List<PictureHolder> pictureHolders)  {
-        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        if(user == null){
-            throw new RuntimeException("the fucking user is not found");
-        }
-        product.setUser(user);
-        Product createdProduct = productRepository.save(product);
-        for(int i=0;i<articleHolders.size();i++){
-            createdProduct.addArticle(articleService.addArticle(
-                    articleHolders.get(i).getInventories(),
-                    pictureHolders.get(i).getPictures(),
-                    articleHolders.get(i).getColor(),
-                    createdProduct));
-        }
-//        for(CreateArticleHolder articleHolder:articleHolders){
-//            createdProduct.addArticle(articleService.addArticle(
-//                    articleHolder.getInventories(),
-//                    articleHolder.getPictures(),
-//                    articleHolder.getColor(),
-//                    createdProduct));
-//        }
-        tagService.addTagToProduct(createdProduct,tags);
-
-        return createdProduct;
-    }
-    @Override
-    public Product addProduct(Product product,
-                              List<Inventory> inventories,
-                              Color color,
-                              List<MultipartFile> pictures)  {
-        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        if(user == null){
-            throw new RuntimeException("the fucking user is not found");
-        }
-        product.setUser(user);
-        Product createdProduct = productRepository.save(product);
-        createdProduct.addArticle(articleService.addArticle(inventories,pictures,color,createdProduct));
-//        List<Inventory> createdInventories = inventoryService.addInventories(inventories,createdProduct);
-//        List<Picture> createdPictures = pictureService.addPictures(pictures,createdProduct);
-//        createdProduct.setPictures(createdPictures);
-//        createdProduct.setInventory(createdInventories);
-        return createdProduct;
-    }
-    public Product addArticleToProduct(List<Inventory> inventories,
-                                       Color color,
-                                       List<MultipartFile> pictures,
-                                       Long id){
-        System.out.println("indise att article to product function");
-        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        if(user == null){
-            throw new RuntimeException("the fucking user is not found");
-        }
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        if(!optionalProduct.isPresent()){
-            throw new RuntimeException("the fucking product does not exist");
-        }
-        if(optionalProduct.get().getUser()!=user){
-            throw new RuntimeException("motherfucker trying to add article to some other motherfuckers product");
-        }
-        System.out.println("passed all the ifs");
-        optionalProduct.get().addArticle(articleService.addArticle(inventories,pictures,color,optionalProduct.get()));
-        System.out.println("before returning the product");
-        return optionalProduct.get();
-    }
-//    public Product addProduct(Product product,List<Inventory> inventories){
-//        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-//        if(user == null){
-//            throw new RuntimeException("the fucking user is not found");
-//        }
+//    public Product addProduct(Category category, Product product,
+//                              List<InventoryDTO> inventories,
+//                              Color color,
+//                              String sellerArticle,
+//                              List<MultipartFile> pictures,
+//                              Dimensions dimensions)  {
+//        User user = userService.getCurrentUser();
 //        product.setUser(user);
-//        Product createdProduct = productRepository.save(product);
-//        List<Inventory> createdInventories = inventoryService.addInventories(inventories,createdProduct);
-//        //List<Picture> createdPictures = pictureService.addPictures(pictures,createdProduct);
-//        //createdProduct.setPictures(createdPictures);
-//        createdProduct.setInventory(createdInventories);
-//        return createdProduct;
+//        product = categoryService.addCategoryToProduct(product,category);
+//        product = productRepository.save(product);
+//        dimensions.setProduct(product);
+//        product.setDimensions(dimentsionsService.addDimensions(dimensions));
+//        if (color!=null) {
+//            product.addArticle(articleService.addArticle(inventories, pictures, color,sellerArticle, product));
+//        }
+//        else{
+//            product.addArticle(articleService.addArticle(inventories,pictures,sellerArticle,product));
+//        }
+//        return product;
+//    }
+//    public Product addProduct(Product product,
+//                              List<InventoryDTO> inventories,
+//                              Color color,
+//                              String sellerArticle,
+//                              List<MultipartFile> pictures,
+//                              Dimensions dimensions,
+//                              List<Tag> tags,
+//                              Category category,
+//                              ProductGender productGender,
+//                              Discount discount){
+//        product = addProduct(category,product,inventories,color,sellerArticle,pictures,dimensions);
+//        product = productRepository.save(product);
+//        if(tags!=null || tags.size()!=0){
+//            tagService.addTagToProduct(product,tags);
+//        }
+//
+//        if(!discount.getPercentage().equals(0)) {
+//            for (Article article : product.getArticles()) {
+//                discountService.save(article, discount);
+//            }
+//        }
+//        productGender = productGenderService.getProductGender(productGender);
+//        if (productGender!=null) {
+//            product.setProductGender(productGender);
+//            productRepository.save(product);
+//        }
+//        return product;
+//    }
+    public Product createProduct(Product productInfo){
+        User user = userService.getCurrentUser();
+        Product product = new Product(productInfo.getName(),productInfo.getDescription(),productInfo.getBrand(),user);
+        product = categoryService.addCategoryToProduct(product,productInfo.getCategory());
+        product = productRepository.save(product);
+        product.setDimensions(dimentsionsService.addDimensionsToProduct(productInfo.getDimensions(),product));
+        //product.addArticle(articleService.createArticleWithPicture(article,pictures,product));
+        if(productInfo.getTags()!=null || productInfo.getTags().size()!=0){
+            tagService.addTagToProduct(product,productInfo.getTags());
+        }
+        productGenderService.setGenderToProduct(product,productInfo.getProductGender());
+        productRepository.save(product);
+        return product;
+    }
+    public Product updateProduct(Long id,Product product){
+        System.out.println("inside product update 22");
+        System.out.println(product.getName());
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if(optionalProduct.isPresent()){
+            Product presentProduct = optionalProduct.get();
+            presentProduct.setName(product.getName());
+            presentProduct.setDescription(product.getDescription());
+            presentProduct.setBrand(product.getBrand());
+            productGenderService.setGenderToProduct(presentProduct,product.getProductGender());
+            tagService.updateProductTags(presentProduct,product.getTags());
+            presentProduct.setDimensions(dimentsionsService.updateDimensions(product.getDimensions(),presentProduct));
+            return presentProduct;
+        }
+        else {
+            return product;
+        }
+
+    }
+    public Product addArticleWithPicture(Long id,Article article,List<MultipartFile> pictures){
+        Optional<Product> optionalProduct =  productRepository.findById(id);
+        if(optionalProduct.isPresent() && optionalProduct.get().getUser().getId() == userService.getCurrentUser().getId()){
+            Product product = optionalProduct.get();
+            product.addArticle(articleService.createArticleWithPicture(article,pictures,product));
+            return product;
+        }else {
+            return null;
+        }
+    }
+    public Product addArticleWithoutPicture(Long id,Article article){
+        Optional<Product> optionalProduct =  productRepository.findById(id);
+        if(optionalProduct.isPresent() && optionalProduct.get().getUser().getId() == userService.getCurrentUser().getId()){
+            Product product = optionalProduct.get();
+            product.addArticle(articleService.createArticleWithoutPicture(article,product));
+            return product;
+        }else {
+            return null;
+        }
+    }
+
+
+    public Product updateProduct(Long productId,
+                                    Long articleId,
+                                    Category category,
+                                 Product product,
+                              List<InventoryDTO> inventories,
+                              Color color,
+                              String sellerArticle,
+                              List<MultipartFile> pictures,
+                                 List<String> leftoverPictures,
+                              Dimensions dimensions)  {
+        Product oldProduct = productRepository.getById(productId);
+        oldProduct.setName(product.getName());
+        oldProduct.setDescription(product.getDescription());
+        oldProduct.setBrand(product.getBrand());
+        product = oldProduct;
+        product = categoryService.updateCategoryProduct(product,category);
+        product = productRepository.save(product);
+        dimensions.setProduct(product);
+        product.setDimensions(dimentsionsService.updateDimensions(dimensions,product));
+        if (color!=null) {
+            articleService.updateArticle(articleId,inventories, pictures,leftoverPictures, color,sellerArticle, product);
+        }
+        else{
+            articleService.updateArticle(articleId,inventories,pictures,leftoverPictures,sellerArticle,product);
+        }
+        return product;
+    }
+    public Product updateProduct(Long productId,
+                                 Long articleId,
+                                 Category category,
+                                 Product product,
+                                 List<InventoryDTO> inventories,
+                                 Color color,
+                                 String sellerArticle,
+                                 List<MultipartFile> pictures,
+                                 List<String> leftoverPictures,
+                                 Dimensions dimensions,
+                                 List<Tag> tags,
+                                 ProductGender productGender,
+                                 Discount discount){
+        System.out.println("product update");
+        product = updateProduct(productId,articleId,category,product,inventories,color,sellerArticle,pictures,leftoverPictures,dimensions);
+        product = productRepository.save(product);
+        if(tags!=null || tags.size()!=0){
+            tagService.updateTagProduct(product,tags);
+        }
+//        if(!discount.getPercentage().equals(0)) {
+//            for (Article article : product.getArticles()) {
+//                discountService.
+//            }
+//        }
+        productGender = productGenderService.getProductGender(productGender);
+        if (productGender!=null) {
+            product.setProductGender(productGender);
+            productRepository.save(product);
+        }
+        return product;
+    }
+
+//    public Product addArticleToProduct(List<InventoryDTO> inventories,
+//                                       Color color,
+//                                       String sellerArticle,
+//                                       List<MultipartFile> pictures,
+//                                       Long id){
+////        System.out.println(id);
+//        User user = userService.getCurrentUser();
+//        Optional<Product> optionalProduct = productRepository.findById(id);
+//
+//        if(!optionalProduct.isPresent()){
+//            throw new RuntimeException("this product does not exist");
+//        }
+//        if(!optionalProduct.get().getUser().equals(user)){
+//            throw new RuntimeException("You are not the owner of this product");
+//        }
+//        optionalProduct.get().addArticle(articleService.addArticle(inventories,pictures,color,sellerArticle,optionalProduct.get()));
+//        return optionalProduct.get();
 //    }
 
-    @Override
+
+    //@Override
     public Optional<Product> getProduct(Long id) {
         return productRepository.findById(id);
     }
@@ -146,23 +223,23 @@ public class ProductService implements ProductServiceInterface{
         return productRepository.findByNameSimilar(name,PageRequest.of(page,amount));
     }
 
-    @Override
+
     public Page<Product> listOfProducts(Integer page,Integer amount) {
         return productRepository.findAll(PageRequest.of(page,amount));
     }
 
-    @Override
+    //@Override
     public void removeProduct(Long id) {
         productRepository.deleteById(id);
     }
 
-    @Override
+    //@Override
     public Product editProduct(Product product) {
         return productRepository.save(product);
     }
 
     public List<Product> productsByUser(Integer page,Integer amount){
-        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        User user = userService.getCurrentUser();
         return productRepository.getByUser(user,PageRequest.of(page,amount));
     }
 
@@ -176,8 +253,7 @@ public class ProductService implements ProductServiceInterface{
     }
     public List<Product> getResentVisits(Integer page,Integer amount){
 
-        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        //Iterable<Product> products = Iterables.limit(productRepository.getByResentVisit(user.getId()),amount);
+        User user = userService.getCurrentUser();
         return productRepository.getByResentVisit(user.getId(),PageRequest.of(page,amount));
     }
     public List<Product> productsByTag(Integer page,Integer amount){

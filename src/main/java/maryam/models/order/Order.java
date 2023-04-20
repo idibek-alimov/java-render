@@ -25,16 +25,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
+
+    public  enum Status {InQueue,Shipping,Arrived,Delivered};
     @JsonView(View.OnlyId.class)
     @Id
     @GeneratedValue(generator = "orders_id_generator", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "orders_id_generator", sequenceName = "Orders_id_generator",allocationSize=1)
     private Long id;
-    @ColumnDefault("false")
-    private Boolean checked;
 
-    @ColumnDefault("false")
-    private Boolean delivered;
+    private Status status = Status.InQueue;
     @JsonView(View.OnlyId.class)
     @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,8 +56,6 @@ public class Order {
     private LocalDateTime updated_at;
     public Order(User user1){
         this.user = user1;
-        this.checked = false;
-        this.delivered = false;
     }
     @PrePersist
     public void setcreationtime(){

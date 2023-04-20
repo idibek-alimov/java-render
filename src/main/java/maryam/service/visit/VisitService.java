@@ -58,5 +58,8 @@ public class VisitService {
         System.out.println(user);
         return visitRepository.findAllByUserOrderByCreatedAt(user);
     }
+    public void deleteByArticleId(Long id){
+        visitRepository.deleteByArticleId(id);
+    }
 
 }

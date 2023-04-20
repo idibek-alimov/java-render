@@ -11,6 +11,7 @@ public class StaticConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("/uploads/");
     }
+
 }
 
 //@Configuration

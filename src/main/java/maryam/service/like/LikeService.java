@@ -49,4 +49,12 @@ public class LikeService {
         }
         return null;
     }
+    public void deleteByArticleId(Long id){
+        try {
+            likeRepository.deleteByArticleId(id);
+        }
+        catch (Exception e){
+            System.out.println("something went wrong in like service");
+        }
+    }
 }

@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class ItemHolder {
-    private Long article;
-    private String size;
-    private Integer amount;
+    private Long inventoryId;
+    private Integer quantity;
 }

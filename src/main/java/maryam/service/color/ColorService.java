@@ -7,6 +7,7 @@ import maryam.models.product.Color;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service @RequiredArgsConstructor @Transactional
@@ -14,25 +15,46 @@ public class ColorService {
 
     private final ColorRepository colorRepository;
     public Color addColor(Color color, Article article){
-        System.out.println("inside add color function");
+        try {
+        System.out.println(31);
+        Optional<Color> optionalColor;
+        System.out.println(32);
+        System.out.println(color);
+
+        optionalColor = colorRepository.findById(color.getId());
+
+        System.out.println(33);
+        if (optionalColor.isPresent()){
+            System.out.println(34);
+            article.setColor(optionalColor.get());
+            System.out.println(35);
+            return optionalColor.get();
+        }
+        else{
+            return null;
+        }
+        }
+        catch (Exception e){
+            System.out.println(e);
+        }
+        return null;
+    }
+    public Color updateColor(Color color,Article article){
+        return addColor(color,article);
+    }
+    public Color save(Color color){
         Optional<Color> optionalColor = colorRepository.findByName(color.getName());
-        System.out.println("1");
-          Color newColor;
-        System.out.println("2");
-          if(!optionalColor.isPresent()){
-              System.out.println("3");
-              newColor = colorRepository.save(color);
-              System.out.println("4");
-          }else{
-              newColor = optionalColor.get();
-          }
-        System.out.println("5");
-//        Color newColor = color;
-//        if(!colorRepository.findByName(color.getName()).isPresent()){
-//            newColor = colorRepository.save(color);
-//        }
-        article.setColor(newColor);
-        System.out.println("6");
-        return newColor;
+        if (optionalColor.isPresent()){
+            return optionalColor.get();
+        }
+        else {
+            return colorRepository.save(color);
+        }
+    }
+//    public List<Color> getAllColors(){
+//        return colorRepository.findAll();
+//    }
+    public List<Color> getColorBySimilarName(String name){
+        return colorRepository.findBySimilarName(name);
     }
 }

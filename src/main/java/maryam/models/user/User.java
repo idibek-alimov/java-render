@@ -51,6 +51,8 @@ public class User {
     private String phoneNumber;
     private Integer age;
 
+
+
     //private String last_name;
 
 
@@ -66,4 +68,8 @@ public class User {
 //            orphanRemoval = true
 //    )
 //    private List<Order> orderList = new ArrayList<>();
+    @OneToOne(mappedBy = "user")
+    private SellerProperties sellerProperties;
+
+
 }

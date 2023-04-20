@@ -8,6 +8,7 @@ import maryam.models.role.Role;
 import maryam.models.user.User;
 import maryam.models.user.VerificationCode;
 import maryam.service.mail.EmailSenderService;
+import maryam.service.visit.UserVisitService;
 import maryam.storage.FileStorageService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Required;
@@ -27,12 +28,14 @@ import java.util.concurrent.ArrayBlockingQueue;
 @Service @RequiredArgsConstructor @Transactional
 public class UserService implements UserServiceInterface, UserDetailsService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    //private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
     private final FileStorageService storageService;
     private final EmailSenderService emailSenderService;
     private final VerificationCodeRepository verificationCodeRepository;
-
+    private final SellerPropertiesService sellerPropertiesService;
+    private final UserVisitService userVisitService;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
@@ -51,28 +54,39 @@ public class UserService implements UserServiceInterface, UserDetailsService {
     @Override
     public User saveUser(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userVisitService.createUserVisits(user);
+        sendVerificationEmail(user.getEmail());
+        roleService.setUserRole(user);
         return userRepository.save(user);
     }
 
-    @Override
-    public Role saveRole(Role role){
-        return roleRepository.save(role);
-    }
+//    @Override
+//    public Role saveRole(Role role){
+//        return roleRepository.save(role);
+//    }
 
-    @Override
-    public void addRoleToUser(String username,String name){
-        User user = userRepository.findByUsername(username);
-        Role role = roleRepository.findByName(name);
-        user.getRoles().add(role);
-    }
+//    @Override
+//    public void addRoleToUser(String username,String name){
+//        User user = userRepository.findByUsername(username);
+//        Role role = roleRepository.findByName(name);
+//        user.getRoles().add(role);
+//    }
 
     @Override
     public User getUser(String username){
         return userRepository.findByUsername(username);
     }
+    public Optional<User> getUser(Long id){return userRepository.findById(id);}
     @Override
     public List<User> getUsers(){
         return (List<User>) userRepository.findAll();
+    }
+    public User getCurrentUser(){
+        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        if(user == null){
+            throw new RuntimeException("the fucking user is not found");
+        }
+        return user;
     }
     public User changeName(String name){
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
@@ -181,6 +195,14 @@ public class UserService implements UserServiceInterface, UserDetailsService {
             throw new RuntimeException("Wrong code your email is not verified try agin ");
         }
         verificationCodeRepository.delete(verificationCode);
+        return user;
+    }
+    public User upgradeToSeller(){
+        User user = getCurrentUser();
+        user.setSellerProperties(sellerPropertiesService.createSellerProperties(user));
+        //Set<Role> roles = (Set<Role>) user.getRoles();
+        roleService.setSellerRole(user);
+        //roles.add()
         return user;
     }
 }
