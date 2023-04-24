@@ -54,10 +54,14 @@ public class UserService implements UserServiceInterface, UserDetailsService {
     @Override
     public User saveUser(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user = userRepository.save(user);
+        System.out.println(user);
         userVisitService.createUserVisits(user);
+        System.out.println("121");
         sendVerificationEmail(user.getEmail());
+        System.out.println("122");
         roleService.setUserRole(user);
-        return userRepository.save(user);
+        return user;
     }
 
 //    @Override

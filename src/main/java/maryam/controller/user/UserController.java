@@ -63,17 +63,9 @@ public class UserController {
     }
     @PostMapping(path = "/save")
     public ResponseEntity<User> saveUser(@RequestBody User user){
-//        System.out.println("user received");
-//        System.out.println(user);
-
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
-        User createdUser = userService.saveUser(user);
-//        System.out.println("user saved");
-//        System.out.println("1");
-//        userVisitService.createUserVisits(user);
-//        System.out.println("2");
-        //userService.sendVerificationEmail(createdUser.getEmail());
-        return ResponseEntity.created(uri).body(createdUser);
+        user = userService.saveUser(user);
+        return ResponseEntity.created(uri).body(user);
     }
 //    @PostMapping(path = "/role/save")
 //    public ResponseEntity<Role> saveRole(@RequestBody Role role){

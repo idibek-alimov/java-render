@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,8 +21,16 @@ public class RoleService {
         return roleRepository.save(new Role(name));
     }
     public User setUserRole(User user){
-        Set<Role> roles = (Set<Role>) user.getRoles();
-        roles.add(roleRepository.findByName("USER_ROLE"));
+        System.out.println("before");
+        Set<Role> roles = user.getRoles().stream().collect(Collectors.toSet());
+        System.out.println("after");
+        Role role = roleRepository.findByName("USER_ROLE");
+        if(role!=null){
+            roles.add(role);
+        }
+        else{
+            roles.add(roleRepository.save(new Role("USER_ROLE")));
+        }
         user.setRoles(roles);
         return user;
     }
