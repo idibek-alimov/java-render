@@ -35,8 +35,14 @@ public class RoleService {
         return user;
     }
     public User setSellerRole(User user){
-        Set<Role> roles = (Set<Role>) user.getRoles();
-        roles.add(roleRepository.findByName("SELLER_ROLE"));
+        Set<Role> roles = user.getRoles().stream().collect(Collectors.toSet());
+        Role role = roleRepository.findByName("SELLER_ROLE");
+        if(role!=null){
+            roles.add(role);
+        }
+        else{
+            roles.add(roleRepository.save(new Role("SELLER_ROLE")));
+        }
         user.setRoles(roles);
         return user;
     }
