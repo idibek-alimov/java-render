@@ -7,7 +7,7 @@ import maryam.models.user.SellerProperties;
 import maryam.models.user.User;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.Optional;
 
 @Service

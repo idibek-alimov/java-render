@@ -11,7 +11,7 @@ import maryam.models.picture.Picture;
 import maryam.serializer.ArticleSerializer;
 import maryam.serializer.ProductSerializer;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

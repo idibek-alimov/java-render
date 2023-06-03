@@ -9,7 +9,7 @@ import maryam.models.product.Product;
 import maryam.models.product.ProductGender;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 

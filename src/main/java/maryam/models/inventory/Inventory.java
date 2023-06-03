@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import maryam.models.product.Article;
 import maryam.serializer.InventorySerializer;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table

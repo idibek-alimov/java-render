@@ -8,7 +8,7 @@ import maryam.models.product.Product;
 import maryam.serializer.InventorySerializer;
 import maryam.serializer.InventorySizeSerializer;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Data

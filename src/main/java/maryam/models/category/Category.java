@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import maryam.serializer.CategorySerializer;
 import maryam.serializer.InventorySizeSerializer;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table

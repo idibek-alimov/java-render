@@ -12,7 +12,7 @@ import maryam.models.user.User;
 import maryam.serializer.ProductSerializer;
 import maryam.serializer.VisitSerializer;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity

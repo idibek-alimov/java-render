@@ -6,7 +6,7 @@ import maryam.models.inventory.CargoBarcode;
 import maryam.models.inventory.Inventory;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor

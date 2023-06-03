@@ -15,7 +15,7 @@ import maryam.storage.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 import java.io.IOException;
 
 

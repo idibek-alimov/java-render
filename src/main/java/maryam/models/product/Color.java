@@ -9,7 +9,7 @@ import maryam.models.inventory.Inventory;
 import maryam.serializer.ColorSerializer;
 import maryam.serializer.ProductSerializer;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Data

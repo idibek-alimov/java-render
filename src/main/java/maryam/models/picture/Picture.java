@@ -11,7 +11,7 @@ import maryam.models.product.Product;
 import maryam.serializer.PictureSerializer;
 import maryam.serializer.ProductSerializer;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "picture")

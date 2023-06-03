@@ -17,7 +17,7 @@ import maryam.service.user.SellerPropertiesService;
 import maryam.service.user.UserService;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

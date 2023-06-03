@@ -6,7 +6,7 @@ import maryam.models.role.Role;
 import maryam.models.user.User;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

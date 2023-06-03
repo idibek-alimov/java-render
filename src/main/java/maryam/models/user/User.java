@@ -12,21 +12,28 @@ import lombok.NoArgsConstructor;
 //import maryam.models.order.Order;
 import maryam.models.role.Role;
 import maryam.serializer.UserSerializer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Table(name="user_list")
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 //@JsonSerialize(using = UserSerializer.class)
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class User {
+public class User implements UserDetails {
+
+
     public  enum Gender {Male,Female};
     @Id
     @GeneratedValue(generator = "user_id_generator", strategy = GenerationType.SEQUENCE)
@@ -71,5 +78,28 @@ public class User {
     @OneToOne(mappedBy = "user")
     private SellerProperties sellerProperties;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream().map(role -> { return new SimpleGrantedAuthority(role.getName());}).collect(Collectors.toList());
+    }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

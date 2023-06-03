@@ -7,7 +7,7 @@
 //import maryam.serializer.BrandSerializer;
 //import maryam.serializer.ProductSerializer;
 //
-//import javax.persistence.*;
+//import jakarta.persistence.*;
 //import java.util.HashSet;
 //import java.util.Set;
 //
