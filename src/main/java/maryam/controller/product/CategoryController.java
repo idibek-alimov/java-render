@@ -18,7 +18,7 @@ public class CategoryController {
     public List<Category> getBySimilarName(@PathVariable("name")String name){
         return categoryService.findBySimilarName(name);
     }
-    @PostMapping(path = "/create")
+    @PostMapping(path = "/seller/create")
     public Category createCategory(@RequestBody CategoryWithProperties category){
         return categoryService.save(category);
     }

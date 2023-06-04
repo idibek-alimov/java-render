@@ -27,76 +27,11 @@ public class ProductController {
     private  VisitService visitService;
     @Autowired
     public LikeService likeService;
-    @GetMapping(path="/{page}/{amount}")
-    public Page<Product> productList(@PathVariable("page")Integer page,@PathVariable("amount")Integer amount){
-        return productService.listOfProducts(page,amount);
-    }
-    @GetMapping(path="resentvisited/{page}/{amount}")
-    public List<Product> resentVisited(@PathVariable("page")Integer page,@PathVariable("amount")Integer amount){
-        return productService.getResentVisits(page,amount);
-    }
-//    @PostMapping(path="",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
-//    public Product createProduct(@RequestPart("picture") List<MultipartFile> pictures,
-//                                 @RequestPart("product") Product product,
-//                                 @RequestPart("size")List<Inventory> inventories,
-//                                 @RequestPart("tags")List<Tag> tags,
-//                                 @RequestPart("color")Color color){
-//        System.out.println("inside post");
-//        for(Inventory inventory:inventories){
-//            System.out.println(inventory);
-//        }
-//        return productService.addProduct(product,inventories,color,pictures,tags);
-//
-//    }
-//    @PostMapping(path="/create",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
-//    public Product createProductWithCategory(@RequestPart("picture") List<MultipartFile> pictures,
-//                                             @RequestPart("product") Product product,
-//                                             @RequestPart("inventory")List<InventoryDTO> inventories,
-//                                             @RequestPart("tags")List<Tag> tags,
-//                                             @RequestPart("color")Color color,
-//                                             @RequestPart("category") Category category,
-//                                             @RequestPart("gender") ProductGender productGender,
-//                                             @RequestPart("dimensions")Dimensions dimensions,
-//                                             @RequestPart("discount")Discount discount,
-//                                             @RequestPart("sellerArticle")String sellerArticle){
-//        return productService.addProduct(product,inventories,color,sellerArticle,pictures,dimensions,tags,category,productGender,discount);
-//
-//    }
-    @PostMapping(path="/create/new",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
+
+    @PostMapping(path="/seller/create/new",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
     public Product createProduct(@RequestPart("product")Product product){
         return  productService.createProduct(product);
     }
-    @PostMapping(path="/update/{productId}/{articleId}",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Product updateProduct(@PathVariable("productId")Long productId,
-                                             @PathVariable("articleId")Long articleId,
-                                             @RequestPart("picture") List<MultipartFile> pictures,
-                                             @RequestPart("oldPictures")List<String> leftoverPictures,
-                                             @RequestPart("product") Product product,
-                                             @RequestPart("inventory")List<InventoryDTO> inventories,
-                                             @RequestPart("tags")List<Tag> tags,
-                                             @RequestPart("color")Color color,
-                                             @RequestPart("category") Category category,
-                                             @RequestPart("gender") ProductGender productGender,
-                                             @RequestPart("dimensions")Dimensions dimensions,
-                                             @RequestPart("discount")Discount discount,
-                                             @RequestPart("sellerArticle")String sellerArticle){
-        System.out.println("all the data received");
-        //productId articleId category product inventories color sellerArticle pictures leftoverPictures dimensions tags productGender discount
-        return productService.updateProduct(productId,articleId,category,product,inventories,color,sellerArticle,pictures,leftoverPictures,dimensions,tags,productGender,discount);
-    }
-//    @PostMapping(path="/addarticle/{id}",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
-//    public Product addToProduct(@RequestPart("picture") List<MultipartFile> pictures,
-//                                 //@RequestPart("product") Product product,
-//                                 @RequestPart("inventory")List<InventoryDTO> inventories,
-//                                 //@RequestPart("tags")List<Tag> tags,
-//                                 @RequestPart("color")Color color,
-//                                @RequestPart("sellerArticle")String sellerArticle,
-//                                @PathVariable("id")Long id){
-//        System.out.println(id);
-//        System.out.println("inside the add article thing");
-//
-//        return productService.addArticleToProduct(inventories,color,sellerArticle,pictures,id);
-//    }
     @PostMapping(path="/article/add/{id}",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
     public Product addArticleToProduct(@RequestPart("article")Article article,
                                        @RequestPart("pictures")List<MultipartFile> pictures,
