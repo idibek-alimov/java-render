@@ -25,8 +25,8 @@ public class InventorySerializer extends StdSerializer<Inventory> {
         jgen.writeNumberField("id",inventory.getId());
         if (inventory.getInStock()!=null)
         jgen.writeBooleanField("inStock",inventory.getInStock());
-        if (inventory.getOriginalPrice()!=null)
-        jgen.writeNumberField("original_price",inventory.getOriginalPrice());
+        if (inventory.getPrice()!=null)
+        jgen.writeNumberField("price",inventory.getPrice());
         jgen.writeNumberField("quantity",inventory.getQuantity());
         if (inventory.getInventorySize()!=null) {
             jgen.writeObjectField("inventorySize",inventory.getInventorySize());

@@ -2,6 +2,7 @@ package maryam.models.category;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import maryam.serializer.CategorySerializer;
@@ -15,6 +16,7 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonSerialize(using= CategorySerializer.class)
+@Builder
 public class Category {
     @Id
     @GeneratedValue(generator = "category_id_generator", strategy = GenerationType.SEQUENCE)

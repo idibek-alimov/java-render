@@ -2,6 +2,7 @@ package maryam.models.category;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import jakarta.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CategoryProperties {
     @Id
     @GeneratedValue(generator = "category_properties_id_generator", strategy = GenerationType.SEQUENCE)
@@ -25,10 +27,6 @@ public class CategoryProperties {
     private Boolean size = false;
     private Boolean color = false;
     private Boolean gender = false;
-
-//    public CategoryProperties(Category category){
-//        this.category = category;
-//    }
     public CategoryProperties(Category category, Boolean size, Boolean color, Boolean gender){
         this.category = category;
         this.size = size;

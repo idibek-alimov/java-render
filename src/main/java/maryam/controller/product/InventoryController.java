@@ -19,31 +19,23 @@ import java.util.stream.Collectors;
 public class InventoryController {
     private final InventoryService inventoryService;
     private final ModelMapper modelMapper;
-    @PostMapping(path = "/add")
-    public Inventory addInventory(@RequestPart("inventory")InventoryIdAndQuantity inventoryItem){
-        System.out.println("inside add inventory");
-        return inventoryService.addInventory(inventoryItem);
-    }
-    @GetMapping(path="/get/seller/queue")
-    public List<SellerItemDTO> getSellerInventoryInQueue(){
-        return inventoryService.getSellerItemsList(0);
-    }
-    @GetMapping(path="/get/seller/shipping")
-    public List<SellerItemDTO> getSellerInventoryShipping(){
-        return inventoryService.getSellerItemsList(1);
-    }
-    @GetMapping(path="/get/seller/arrived")
-    public List<SellerItemDTO> getSellerInventoryArrived(){
-        return inventoryService.getSellerItemsList(2);
-    }
-    @GetMapping(path="/get/seller/delivered")
-    public List<SellerItemDTO> getSellerInventoryDelivered(){
-        return inventoryService.getSellerItemsList(3);
-    }
-    @GetMapping(path="/get/seller/all")
-    public List<SellerItemDTO> getSellerInventoryAll(){
-        return inventoryService.getSellerItemsListAll();
-    }
+
+//    @GetMapping(path="/get/seller/shipping")
+//    public List<SellerItemDTO> getSellerInventoryShipping(){
+//        return inventoryService.getSellerItemsList(1);
+//    }
+//    @GetMapping(path="/get/seller/arrived")
+//    public List<SellerItemDTO> getSellerInventoryArrived(){
+//        return inventoryService.getSellerItemsList(2);
+//    }
+//    @GetMapping(path="/get/seller/delivered")
+//    public List<SellerItemDTO> getSellerInventoryDelivered(){
+//        return inventoryService.getSellerItemsList(3);
+//    }
+//    @GetMapping(path="/get/seller/all")
+//    public List<SellerItemDTO> getSellerInventoryAll(){
+//        return inventoryService.getSellerItemsListAll();
+//    }
 //    private SellerItemDTO convertToDto(Inventory inventory) {
 //        System.out.println(1);
 //        SellerItemDTO sellerItemDTO = modelMapper.map(inventory, SellerItemDTO.class);

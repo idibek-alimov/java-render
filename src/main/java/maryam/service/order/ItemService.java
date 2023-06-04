@@ -42,8 +42,8 @@ public class ItemService {
             Inventory inventory = inventoryService.getById(item.getInventoryId());
             if (inventory != null && inventory.getInStock() && inventory.getQuantity() >= item.getQuantity()) {
                 newItem = new Item(inventory, item.getQuantity(), order, inventory.getArticle().getProduct().getUser(), userService.getCurrentUser());
-                newItem.setOriginalPrice(inventory.getOriginalPrice()* item.getQuantity());
-                newItem.setMaryamPrice(inventory.getMaryamPrice()*item.getQuantity());
+                newItem.setPrice(inventory.getPrice()* item.getQuantity());
+                //newItem.setMaryamPrice(inventory.getMaryamPrice()*item.getQuantity());
                 itemList.add(newItem);
                 inventoryService.changeQuantity(inventory, inventory.getQuantity() - item.getQuantity());
             }
@@ -77,7 +77,7 @@ public class ItemService {
             item.setStatus(status);
             if(status.equals(Item.Status.Delivered)){
                 System.out.println("status is delivered");
-                sellerPropertiesService.sellProductHandle(userService.getCurrentUser(),item.getQuantity(),item.getOriginalPrice());
+                sellerPropertiesService.sellProductHandle(userService.getCurrentUser(),item.getQuantity(),item.getPrice());
             }
             return item;
         }

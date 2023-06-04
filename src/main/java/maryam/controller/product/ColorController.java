@@ -13,7 +13,7 @@ import java.util.List;
 public class ColorController {
     private final ColorService colorService;
 
-    @PostMapping(path = "/create")
+    @PostMapping(path = "/seller/create")
     public Color createColor(@RequestPart("color") Color color){
         return colorService.save(color);
     }

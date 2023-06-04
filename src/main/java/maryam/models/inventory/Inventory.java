@@ -26,9 +26,7 @@ public class Inventory {
     @JsonBackReference
     @ManyToOne
     private Article article;
-
-    private Double originalPrice;
-    private Double maryamPrice;
+    private Double price;
     private Integer quantity = 0;
     private Boolean inStock = false;
 
@@ -41,8 +39,7 @@ public class Inventory {
 
     public Inventory(Article article,Double price){
         this.article = article;
-        this.originalPrice = price;
-        this.maryamPrice = price*1.25;
+        this.price = price;
     }
     public Inventory(Article article,Double price,Integer quantity){
         this(article,price);
