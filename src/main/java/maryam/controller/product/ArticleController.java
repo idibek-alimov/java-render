@@ -19,11 +19,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ArticleController {
     private final ArticleService articleService;
-    @GetMapping(path="/{page}/{amount}")
-    public Page<Article> getListOfArticles(@PathVariable("page")Integer page,
-                                           @PathVariable("amount")Integer amount){
-        return articleService.getListOfArticles(page,amount);
-    }
+//    @GetMapping(path="/{page}/{amount}")
+//    public Page<Article> getListOfArticles(@PathVariable("page")Integer page,
+//                                           @PathVariable("amount")Integer amount){
+//        return articleService.getListOfArticles(page,amount);
+//    }
     @GetMapping(path="/dto/{page}/{amount}")
     public List<CustomerArticleDto> getListOfArticlesDto(@PathVariable("page")Integer page,
                                                          @PathVariable("amount")Integer amount){

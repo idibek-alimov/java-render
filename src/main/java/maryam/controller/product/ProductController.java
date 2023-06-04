@@ -101,9 +101,9 @@ public class ProductController {
     public Product addArticleToProduct(@RequestPart("article")Article article,
                                        @RequestPart("pictures")List<MultipartFile> pictures,
                                        @PathVariable("id")Long id){
-        System.out.println("Inside add article");
-        System.out.println(article.getInventory().get(0).getOriginalPrice());
-        System.out.println("THIS IS ORIGINAL PRICE");
+//        System.out.println("Inside add article");
+//        System.out.println(article.getInventory().get(0).getOriginalPrice());
+//        System.out.println("THIS IS ORIGINAL PRICE");
         return productService.addArticleWithPicture(id,article,pictures);
     }
     @PostMapping(path="/article/add/picture/none/{id}",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})

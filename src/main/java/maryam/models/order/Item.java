@@ -57,8 +57,7 @@ public class Item {
     @ManyToOne(fetch = FetchType.LAZY)
     private User customer;
 
-    private Double maryamPrice;
-    private Double originalPrice;
+    private Double price;
     public Item(Inventory inventory,Integer quantity,Order order,User owner){
         this.inventory = inventory;
         this.quantity = quantity;

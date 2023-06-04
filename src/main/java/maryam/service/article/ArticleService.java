@@ -232,7 +232,6 @@ public class ArticleService {
     }
 
     public List<CustomerArticleDto> getListOfArticlesDto(Integer page, Integer amount){
-        System.out.println("before to dto");
         return articleRepository.findAll(PageRequest.of(page,amount)).stream().map(this::articleToDto).collect(Collectors.toList());
     }
     public CustomerArticleDto articleToDto(Article article){

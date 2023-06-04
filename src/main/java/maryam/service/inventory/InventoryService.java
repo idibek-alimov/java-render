@@ -62,7 +62,7 @@ public class InventoryService implements InventoryServiceInterface{
         Integer counter = 0 ;
         for(Inventory itemInventory:inventories){
             //System.out.println(itemInventory.getOriginalPrice());
-            inventory = inventoryRepository.save(new Inventory(article,itemInventory.getOriginalPrice(),itemInventory.getQuantity()));
+            inventory = inventoryRepository.save(new Inventory(article,itemInventory.getPrice(),itemInventory.getQuantity()));
             if(itemInventory.getInventorySize()!=null){
                 inventorySizeService.addInventorySize(inventory,itemInventory.getInventorySize().getSize());
             }
@@ -108,8 +108,8 @@ public class InventoryService implements InventoryServiceInterface{
         for(Inventory inventory:inventories){
             if (inventory.getId()!=null){
                 inventoryPlaceholder = inventoryRepository.findById(inventory.getId()).get();
-                if (inventoryPlaceholder.getOriginalPrice()!=inventory.getOriginalPrice())
-                    inventoryPlaceholder.setOriginalPrice(inventory.getOriginalPrice());
+                if (inventoryPlaceholder.getPrice()!=inventory.getPrice())
+                    inventoryPlaceholder.setPrice(inventory.getPrice());
 
                 //inventoryPlaceholder.setQuantity(inventory.getQuantity());
                 if (inventoryPlaceholder.getInventorySize().getSize()!=inventory.getInventorySize().getSize())
@@ -166,9 +166,9 @@ public class InventoryService implements InventoryServiceInterface{
         //System.out.println("inventory was here");
         CustomerInventoryDto inventoryDto = new CustomerInventoryDto();
         inventoryDto.setId(inventory.getId());
-        inventoryDto.setOriginalPrice(inventory.getMaryamPrice());
+        inventoryDto.setOriginalPrice(inventory.getPrice());
         if(discount!=null) {
-            Double discountPrice = Math.floor(inventory.getMaryamPrice() * (100 - discount)/100);
+            Double discountPrice = Math.floor(inventory.getPrice() * (100 - discount)/100);
             inventoryDto.setDiscountPrice(discountPrice);
         }
         inventoryDto.setQuantity(inventory.getQuantity());
