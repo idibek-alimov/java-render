@@ -25,10 +25,6 @@ public class InventoryService implements InventoryServiceInterface{
     private final CargoBarcodeService cargoBarcodeService;
     private final InventorySizeService inventorySizeService;
     private final UserService userService;
-    @Override
-    public Inventory addInventory(Inventory inventory) {
-        return inventoryRepository.save(inventory);
-    }
     public Inventory addInventory(Inventory inventory,Article article){
         if (inventory.getInventorySize()!=null){
             inventory.setInventorySize(inventorySizeService.addInventorySize(inventory,inventory.getInventorySize().getSize()));
@@ -37,7 +33,7 @@ public class InventoryService implements InventoryServiceInterface{
         inventory.setArticle(article);
         return inventory;
     }
-    @Override @Transactional
+    @Transactional
     public List<Inventory> addInventories(List<InventoryDTO> inventories, Article article) {
         List<Inventory> inventoryList = new ArrayList<>();
         Inventory inventory;
@@ -53,15 +49,11 @@ public class InventoryService implements InventoryServiceInterface{
         }
         return inventoryList;
     }
-
     public List<Inventory> createInventories(List<Inventory> inventories,Article article){
-        System.out.println("creating inventory");
-
         List<Inventory> inventoryList = new ArrayList<>();
         Inventory inventory;
         Integer counter = 0 ;
         for(Inventory itemInventory:inventories){
-            //System.out.println(itemInventory.getOriginalPrice());
             inventory = inventoryRepository.save(new Inventory(article,itemInventory.getPrice(),itemInventory.getQuantity()));
             if(itemInventory.getInventorySize()!=null){
                 inventorySizeService.addInventorySize(inventory,itemInventory.getInventorySize().getSize());
@@ -79,22 +71,6 @@ public class InventoryService implements InventoryServiceInterface{
         }
         return null;
     }
-    public List<Inventory> updateInventory(List<InventoryDTO> inventories, Article article){
-        List<Inventory> inventoryList = new ArrayList<>();
-        Inventory inventory;
-        for(InventoryDTO inventoryDTO: inventories){
-            inventory = inventoryRepository.findById(inventoryDTO.getId()).get();
-            //inventory = inventoryRepository.save(new Inventory(article,inventoryDTO.getPrice(),inventoryDTO.getQuantity()));
-//            System.out.println("created Inventory");
-//            System.out.println(inventory.getPrice());
-            if(!inventoryDTO.getSize().equals(inventory.getInventorySize().getSize())){
-                inventory.getInventorySize().setSize(inventoryDTO.getSize());
-            }
-            inventoryList.add(inventoryRepository.save(inventory));
-
-        }
-        return inventoryList;
-    }
     public Inventory changeQuantity(Inventory inventory,Integer quantity){
         if (quantity==0){
             inventory.setInStock(false);
@@ -110,8 +86,6 @@ public class InventoryService implements InventoryServiceInterface{
                 inventoryPlaceholder = inventoryRepository.findById(inventory.getId()).get();
                 if (inventoryPlaceholder.getPrice()!=inventory.getPrice())
                     inventoryPlaceholder.setPrice(inventory.getPrice());
-
-                //inventoryPlaceholder.setQuantity(inventory.getQuantity());
                 if (inventoryPlaceholder.getInventorySize().getSize()!=inventory.getInventorySize().getSize())
                     inventorySizeService.addInventorySize(inventoryPlaceholder,inventory.getInventorySize().getSize());
                 inventoryList.add(inventoryPlaceholder);
@@ -122,61 +96,23 @@ public class InventoryService implements InventoryServiceInterface{
                 inventoryList.add(newInventory);
             }
         }
-//        for(Inventory inventory:article.getInventory()){
-//            if (!inventoryList.contains(inventory)){
-//                inventory.setAvailable(false);
-//            }
-//        }
-    }
-
-    @Override
-    public void removeInventory(Inventory inventory) {
-        inventoryRepository.delete(inventory);
-    }
-
-    @Override
-    public void removeInventories(List<Inventory> inventories) {
-        inventoryRepository.deleteAll(inventories);
-    }
-
-    public Inventory addInventory(InventoryIdAndQuantity inventoryItem){
-        Inventory inventory = getById(inventoryItem.getId());
-        if(inventory!=null){
-            inventory.setQuantity(inventory.getQuantity()+inventoryItem.getQuantity());
-            //sellerPropertiesService.addProductInStorage(userService.getCurrentUser(),inventoryItem.getQuantity());
-            inventory.setInStock(true);
-        }
-        return inventory;
-    }
-//    public Inventory addInventoryToStorage(Long id,Integer quantity){
-//        Inventory inventory = getById(id);
-//        if (inventory != null) {
-//            inv
-//        }
-//    }
-    public List<SellerItemDTO> getSellerItemsList(Integer status){
-        //userService.getCurrentUser().getId();
-        return inventoryRepository.getSellerItem(userService.getCurrentUser().getId(),status);
-    }
-    public List<SellerItemDTO> getSellerItemsListAll(){
-        //userService.getCurrentUser().getId();
-        return inventoryRepository.getSellerItemAll(userService.getCurrentUser().getId());
     }
     public CustomerInventoryDto inventoryToCustomerDto(Inventory inventory,Integer discount){
-        //System.out.println("inventory was here");
-        CustomerInventoryDto inventoryDto = new CustomerInventoryDto();
-        inventoryDto.setId(inventory.getId());
-        inventoryDto.setOriginalPrice(inventory.getPrice());
+        CustomerInventoryDto inventoryDto = new CustomerInventoryDto().builder()
+                .id(inventory.getId())
+                .originalPrice(inventory.getPrice())
+                .quantity(inventory.getQuantity())
+                .inStock(inventory.getInStock())
+                .barcode(inventory.getCargoBarcode().getBarcode())
+                .build();
         if(discount!=null) {
             Double discountPrice = Math.floor(inventory.getPrice() * (100 - discount)/100);
             inventoryDto.setDiscountPrice(discountPrice);
         }
-        inventoryDto.setQuantity(inventory.getQuantity());
-        inventoryDto.setInStock(inventory.getInStock());
+
         if(inventory.getInventorySize()!=null){
             inventoryDto.setSize(inventory.getInventorySize().getSize());
         }
-        inventoryDto.setBarcode(inventory.getCargoBarcode().getBarcode());
         return inventoryDto;
     }
 }

@@ -24,16 +24,15 @@ public class CategorySerializer extends StdSerializer<Category> {
         jgen.writeStartObject();
         jgen.writeNumberField("id",category.getId());
         jgen.writeStringField("name",category.getName());
+        jgen.writeStringField("nameTJ",category.getNameTJ());
+        jgen.writeStringField("nameRU",category.getNameRU());
         if(category.getCategoryProperties()!=null){
             if(category.getCategoryProperties().getSize()!=null) {
-//                System.out.println("has size");
                 jgen.writeBooleanField("size", category.getCategoryProperties().getSize());
             }
             if(category.getCategoryProperties().getColor()!=null) {
-//                System.out.println("has color");
                 jgen.writeBooleanField("color", category.getCategoryProperties().getColor());
             }
-            //jgen.writeObjectField("properties",category.getCategoryProperties());
         }
         jgen.writeEndObject();
     }

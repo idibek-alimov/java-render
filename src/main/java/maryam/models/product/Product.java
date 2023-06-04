@@ -3,6 +3,7 @@ package maryam.models.product;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import maryam.models.category.Category;
@@ -23,33 +24,24 @@ import java.util.List;
 @AllArgsConstructor
 //@JsonSerialize(using = NewProductSerializer.class)
 @JsonSerialize(using= ProductSerializer.class)
+@Builder
 //@JsonView(ProductSerializer.class)
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Product implements Comparable<Product>{
-    public  enum Gender {Male,Female};
+//    public  enum Gender {Male,Female};
     @Id
     @GeneratedValue(generator = "product_id_generator", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "product_id_generator",initialValue = 1, allocationSize = 1,sequenceName = "Product_id_generator")
-    //@JsonView(View.OnlyId.class)
     private Long id;
-
-//    @JsonView(View.Detailed.class)
     @ManyToOne
-//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-//    @JsonIdentityReference(alwaysAsId = true)
     private Category category;
 
-    //@JsonView(View.Detailed.class)
     private String name;
     private String brand;
 
-
-    //@JsonView(View.Detailed.class)
     @ManyToOne
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
-//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-//    @JsonIdentityReference(alwaysAsId = true)
     private User user;
 
     @OneToOne(mappedBy = "product")
@@ -80,11 +72,6 @@ public class Product implements Comparable<Product>{
 
     @ManyToMany(mappedBy = "products")
     private List<Tag> tags = new ArrayList<>();
-
-//    @ManyToMany(mappedBy = "products")
-//    private List<Brand> brands = new ArrayList<>();
-
-
     public Product(String name){
         this.name = name;
     }

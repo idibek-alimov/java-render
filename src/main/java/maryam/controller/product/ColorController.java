@@ -12,9 +12,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ColorController {
     private final ColorService colorService;
-
     @PostMapping(path = "/seller/create")
-    public Color createColor(@RequestPart("color") Color color){
+    public Color createColor(@RequestBody Color color){
         return colorService.save(color);
     }
 

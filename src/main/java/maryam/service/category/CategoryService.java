@@ -59,7 +59,13 @@ public class CategoryService {
         }
     }
     public Category save(CategoryWithProperties categoryWithProperties){
-        Category category = categoryRepository.save(new Category(categoryWithProperties.getName()));
+        Category category = new Category()
+                .builder()
+                .name(categoryWithProperties.getName())
+                .nameTJ(categoryWithProperties.getNameTJ())
+                .nameRU(categoryWithProperties.getNameRU())
+                .build();
+        category = categoryRepository.save(category);
         if(categoryWithProperties.getColor()!=null || categoryWithProperties.getSize()!=null){
             CategoryProperties categoryProperties =categoryPropertiesRepository.save(new CategoryProperties(category,categoryWithProperties.getSize(),categoryWithProperties.getColor(),categoryWithProperties.getGender()));
             category.setCategoryProperties(categoryProperties);

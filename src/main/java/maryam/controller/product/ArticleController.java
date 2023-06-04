@@ -3,6 +3,7 @@ package maryam.controller.product;
 import lombok.RequiredArgsConstructor;
 import maryam.dto.article.CustomerArticleDto;
 import maryam.models.product.Article;
+import maryam.models.product.Product;
 import maryam.service.article.ArticleService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -19,16 +20,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ArticleController {
     private final ArticleService articleService;
-//    @GetMapping(path="/{page}/{amount}")
-//    public Page<Article> getListOfArticles(@PathVariable("page")Integer page,
-//                                           @PathVariable("amount")Integer amount){
-//        return articleService.getListOfArticles(page,amount);
-//    }
-    @GetMapping(path = "/test")
-    public String something(){
-        return "Hello nigga";
-    }
-    @GetMapping(path="/dto/{page}/{amount}")
+    @GetMapping(path="/{page}/{amount}")
     public List<CustomerArticleDto> getListOfArticlesDto(@PathVariable("page")Integer page,
                                                          @PathVariable("amount")Integer amount){
         return null;//articleService.getListOfArticlesDto(page,amount);
@@ -38,27 +30,31 @@ public class ArticleController {
         return articleService.getArticlesInProduct(id);
     }
     @GetMapping(path="/{id}")
-    public Optional<Article> getArticle(@PathVariable("id")Long id){
-        return articleService.getArticle(id);
-    }
-    @GetMapping(path="/dto/{id}")
     public CustomerArticleDto getArticleDto(@PathVariable("id")Long id){
         return articleService.getArticleDto(id);
+    }
+    @PostMapping(path="/seller/add/{id}",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
+    public Product addArticleToProduct(@RequestPart("article")Article article,
+                                       @RequestPart("pictures")List<MultipartFile> pictures,
+                                       @PathVariable("id")Long productId){
+        return articleService.addArticleWithPicture(productId,article,pictures);
+    }
+    @PostMapping(path="/seller/add/picture/none/{id}",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
+    public Product addArticleWithoutPic(@RequestPart("article")Article article,
+                                        @PathVariable("id")Long id){
+        return articleService.addArticleWithoutPicture(id,article);
     }
     @PostMapping(path="/seller/update/{id}",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
     public Article updateArticle(@PathVariable("id")Long id,
                                  @RequestPart("article")Article article,
                                  @RequestPart("pictures")List<MultipartFile> pictures,
                                  @RequestPart("oldPics")List<Long> oldPicsId){
-//        System.out.println("hello jovid");
         return articleService.updateArticle(id,article,oldPicsId,pictures);
     }
     @PostMapping(path="/seller/update/picture/without/{id}",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
     public Article updateArticleWithoutPicture(@PathVariable("id")Long id,
                                  @RequestPart("article")Article article,
-                                 //@RequestPart("pictures")List<MultipartFile> pictures,
                                  @RequestPart("oldPics")List<Long> oldPicsId){
-//        System.out.println("hello jovid");
         return articleService.updateArticleWithoutPicture(id,article,oldPicsId);
     }
     @GetMapping(path="/search/{searchText}/{page}/{amount}")
@@ -71,25 +67,15 @@ public class ArticleController {
                 articleList.add(articleService.getArticle(article_id).get());
                 return articleList;
             }
-            catch (NumberFormatException nfe){
+            catch (Exception nfe){
                 return articleService.searchByName(searchText,page,amount);
             }
-
-        //return articleService.searchByName(searchText,page,amount);
     }
     @GetMapping(path="/name/{name}/{page}/{amount}")
     public List<Article> getListByName(@PathVariable("name")String name,
                                                   @PathVariable("page")Integer page,
                                                   @PathVariable("amount")Integer amount){
-        //return articleService.getListOfSimilarArticles(id,page,amount);
         return articleService.searchSpecificName(name,page,amount);
-    }
-
-    @GetMapping(path="/similar/{id}/{page}/{amount}")
-    public Page<Article> getListOfSimilarArticles(@PathVariable("id")Long id,
-            @PathVariable("page")Integer page,
-                                           @PathVariable("amount")Integer amount){
-        return articleService.getListOfSimilarArticles(id,page,amount);
     }
     @GetMapping(path="/seller/presentable/true")
     public List<Article> getListByUser(){

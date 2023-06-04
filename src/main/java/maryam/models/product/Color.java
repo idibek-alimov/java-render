@@ -24,6 +24,7 @@ public class Color {
 
     @Column(unique = true)
     private String name;
-
+    private String nameTJ;
+    private String nameRU;
 
 }

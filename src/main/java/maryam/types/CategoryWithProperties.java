@@ -12,6 +12,8 @@ public class CategoryWithProperties {
     private Long id;
     private Category category;
     private String name;
+    private String nameTJ;
+    private String nameRU;
     private Boolean size;
     private Boolean color;
     private Boolean gender;
