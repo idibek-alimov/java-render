@@ -97,6 +97,10 @@ public class UserController {
     public User upgradeToSeller(){
         return userService.upgradeToSeller();
     }
+    @GetMapping(path = "/upgrade/manager")
+    public User upgradeToManager(){
+        return userService.upgradeToManager();
+    }
     @GetMapping(path = "/seller/properties")
     public SellerProperties getSellerProperties(){
         return userService.getCurrentUser().getSellerProperties();
@@ -112,12 +116,10 @@ public class UserController {
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ){
-        System.out.println("authenticate request");
-        System.out.println(request);
         return ResponseEntity.ok(userService.authenticate(request));
     }
     @CrossOrigin("*")
-    @PostMapping("/seller/authenticate")
+    @PostMapping("/authenticate/seller")
     public ResponseEntity<AuthenticationResponse> authenticateSeller(
             @RequestBody AuthenticationRequest request
     ) throws  Exception{
@@ -126,7 +128,7 @@ public class UserController {
             return ResponseEntity.ok(userService.authenticateSeller(request));
         }
         else{
-            throw new UsernameNotFoundException("this is not a seller accaunt");
+            throw new UsernameNotFoundException("this is not a seller ");
         }
     }
 }

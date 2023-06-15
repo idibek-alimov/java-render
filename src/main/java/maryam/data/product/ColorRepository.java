@@ -11,8 +11,8 @@ public interface ColorRepository extends CrudRepository<Color,Long> {
 
     Optional<Color> findByName(String name);
 
-    @Query(value = "SELECT * FROM color  WHERE ?1 % ANY(STRING_TO_ARRAY(category.name,' ')) or" +
-            " ?1 % ANY(STRING_TO_ARRAY(category.nameru,' ')) or" +
-            " ?1 % ANY(STRING_TO_ARRAY(category.nametj,' '))",nativeQuery = true)
+    @Query(value = "SELECT * FROM color  WHERE ?1 % ANY(STRING_TO_ARRAY(color.name,' ')) or" +
+            " ?1 % ANY(STRING_TO_ARRAY(color.nameru,' ')) or" +
+            " ?1 % ANY(STRING_TO_ARRAY(color.nametj,' '))",nativeQuery = true)
     List<Color> findBySimilarName(String name);
 }

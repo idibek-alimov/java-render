@@ -2,9 +2,7 @@ package maryam.models.product;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import maryam.models.inventory.Inventory;
 import maryam.serializer.ColorSerializer;
 import maryam.serializer.ProductSerializer;
@@ -12,10 +10,12 @@ import maryam.serializer.ProductSerializer;
 import jakarta.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonSerialize(using= ColorSerializer.class)
+@Builder
 public class Color {
     @Id
     @GeneratedValue(generator = "color_id_generator", strategy = GenerationType.SEQUENCE)

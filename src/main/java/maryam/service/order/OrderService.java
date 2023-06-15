@@ -33,12 +33,13 @@ public class OrderService {
     public Order addOrder(List<ItemHolder> items) throws Exception{
         try {
             User user = userService.getCurrentUser();
+            System.out.println(user);
                 Order order = orderRepository.save(new Order(user));
                 order.setItems(itemService.addItems(items, order));
                 return order;
         }
         catch (Exception e){
-            throw new Exception(e);
+            throw new Exception("Fuck you there is no product left at this point Nigga");
         }
     }
     public Order setOrderShipping(Long id){
@@ -150,6 +151,7 @@ public class OrderService {
     }
     public List<WeekOrderClass> findWeekOrdersShipping(){
         //List<WeekOrderStatisticDTO> weekOrder = orderRepository.findWeekOrdersShipping(userService.getCurrentUser().getId());
+        //return null;
         return weekOrderConverter(orderRepository.findWeekOrdersShipping(userService.getCurrentUser().getId()));
     }
     public List<DayOrderStatisticDTO> findTodayOrdersDelivered(){

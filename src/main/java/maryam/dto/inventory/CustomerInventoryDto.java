@@ -11,8 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CustomerInventoryDto {
     private Long id;
-    private Double originalPrice;
-    private Double discountPrice;
+    private Double price;
     private Integer quantity;
     private Boolean inStock;
     private String size;

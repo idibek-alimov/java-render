@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import maryam.dto.inventory.CustomerInventoryDto;
+import maryam.models.product.Article;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -24,7 +26,6 @@ public class CustomerArticleDto {
     private String name;
     private String brand;
     private String description;
-    private String gender;
     private String category;
     private List<String> pictures;
     private List<CustomerInventoryDto> inventories;

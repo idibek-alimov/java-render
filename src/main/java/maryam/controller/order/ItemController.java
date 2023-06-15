@@ -1,11 +1,13 @@
 package maryam.controller.order;
 
 import lombok.RequiredArgsConstructor;
+import maryam.dto.order.SellerItemDTO;
 import maryam.models.order.Item;
 import maryam.service.order.ItemService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path="/api/item")
@@ -16,14 +18,20 @@ public class ItemController {
     public List<Item> getByUserStatus(@PathVariable("status")Integer status){
         return itemService.byUserStatus(status);
     }
-    @GetMapping(path = "/owner/{status}")
-    public List<Item> getByOwnerStatus(@PathVariable("status")Integer status){
-        return itemService.byOwnerStatus(status);
+    @GetMapping(path = "/seller/{status}")
+    public List<SellerItemDTO> getByOwnerStatus(@PathVariable("status")String status){
+        //"queue" | "shipping" | "arrived" | "delivered";
+        switch (status){
+            case "queue":return itemService.byOwnerStatus(0).stream().map(item -> itemToSellerItemDto(item)).collect(Collectors.toList());
+            case "shipping":return itemService.byOwnerStatus(1).stream().map(item -> itemToSellerItemDto(item)).collect(Collectors.toList());
+            case "arrived":return itemService.byOwnerStatus(2).stream().map(item -> itemToSellerItemDto(item)).collect(Collectors.toList());
+            case "delivered":return itemService.byOwnerStatus(3).stream().map(item -> itemToSellerItemDto(item)).collect(Collectors.toList());
+        }
+        return null;
+        //return itemService.byOwnerStatus(status).stream().map(item -> itemToSellerItemDto(item)).collect(Collectors.toList());
     }
-    @GetMapping(path = "/set/status/{itemId}/{status}")
+    @GetMapping(path = "/manager/set/status/{itemId}/{status}")
     public Item setStatus(@PathVariable("status")Integer status,@PathVariable("itemId") Long itemId) throws Exception{
-        System.out.println(status);
-        System.out.println(itemId);
         switch (status){
             case 0:return itemService.setStatus(itemId, Item.Status.InQueue);
             case 1:return itemService.setStatus(itemId, Item.Status.Shipping);
@@ -45,5 +53,18 @@ public class ItemController {
         return itemService.byOwnerStatus(status);
     }
 
-
+    public SellerItemDTO itemToSellerItemDto(Item item){
+        return new SellerItemDTO()
+                .builder()
+                .id(item.getId())
+                .price(item.getPrice())
+                .name(item.getInventory().getArticle().getProduct().getName())
+                .brand(item.getInventory().getArticle().getProduct().getBrand())
+                .sellerArticle(item.getInventory().getArticle().getSellerArticle())
+                .createdAt(item.getCreated_at().toString())
+                .pictures(item.getInventory().getArticle().getPictures().stream().map(picture -> picture.getName()).collect(Collectors.toList()))
+                .size(item.getInventory().getSize())
+                .status(item.getStatus().name())
+                .build();
+    }
 }

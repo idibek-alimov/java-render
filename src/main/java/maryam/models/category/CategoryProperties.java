@@ -26,12 +26,10 @@ public class CategoryProperties {
 
     private Boolean size = false;
     private Boolean color = false;
-    private Boolean gender = false;
     public CategoryProperties(Category category, Boolean size, Boolean color, Boolean gender){
         this.category = category;
         this.size = size;
         this.color = color;
-        this.gender = gender;
     }
 
 }

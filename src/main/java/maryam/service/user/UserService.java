@@ -1,5 +1,4 @@
 package maryam.service.user;
-
 import lombok.RequiredArgsConstructor;
 import maryam.controller.user.extra.AuthenticationRequest;
 import maryam.controller.user.extra.AuthenticationResponse;
@@ -30,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.transaction.Transactional;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.stream.Collectors;
 
 @Service @RequiredArgsConstructor @Transactional
 public class UserService implements UserServiceInterface, UserDetailsService {
@@ -94,12 +94,12 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         return (List<User>) userRepository.findAll();
     }
     public User getCurrentUser(){
-//        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-//        if(user == null){
-//            throw new RuntimeException("the fucking user is not found");
-//        }
-//        return user;
-        return null;
+        if (!SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals("anonymousUser")){
+            return (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        }
+        else {
+            return null;
+        }
     }
     public User changeName(String name){
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
@@ -124,29 +124,14 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         return user;
     }
     public User changeGender(@NotNull String gender){
-        System.out.println("gender received in user service  "+gender.toString());
-        System.out.println("it is male  "+gender.equals("male"));
-        System.out.println("it is female  "+gender.equals("female"));
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        System.out.println(username);
-        System.out.println(1);
         User user = userRepository.findByUsername(username);
-        System.out.println(user);
-        System.out.println(2);
         if(gender.toLowerCase().equals("male")){
-            System.out.println(3);
             user.setGender(User.Gender.Male);
-            System.out.println(4);
         } else if (gender.toLowerCase().equals("female")) {
-            System.out.println(5);
-            System.out.println(User.Gender.valueOf("Male"));
-            System.out.println(User.Gender.Male);
             user.setGender(User.Gender.Female);
-            System.out.println(6);
         }
-        System.out.println(7);
         userRepository.save(user);
-        System.out.println(8);
         return user;
     }
     public User changePhoneNumber(String phoneNumber){
@@ -215,8 +200,13 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         if(user.getSellerProperties()==null) {
             user.setSellerProperties(sellerPropertiesService.createSellerProperties(user));
         }
-        roleService.setSellerRole(user);
-        //roles.add()
+        user = roleService.setSellerRole(user);
+        user = userRepository.save(user);
+        return user;
+    }
+    public User upgradeToManager(){
+        User user = getCurrentUser();
+        roleService.setManagerRole(user);
         return user;
     }
     public AuthenticationResponse register(RegisterRequest request){
@@ -226,6 +216,8 @@ public class UserService implements UserServiceInterface, UserDetailsService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .build();
+        userRepository.save(user);
+        user = roleService.setUserRole(user);
         userRepository.save(user);
         var accessToken = jwtService.generateToken(user,1);
         var refreshToken = jwtService.generateToken(user,2);
@@ -239,16 +231,17 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         return AuthenticationResponse.builder().access_token(accessToken).refresh_token(refreshToken).build();
 
     }
-    public AuthenticationResponse authenticateSeller(AuthenticationRequest request){
+    public AuthenticationResponse authenticateSeller(AuthenticationRequest request) throws Exception{
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword()));
         var user = userRepository.findByUsername(request.getUsername());
+
         if(user.getSellerProperties()!=null) {
             var accessToken = jwtService.generateToken(user, 1);
             var refreshToken = jwtService.generateToken(user, 2);
             return AuthenticationResponse.builder().access_token(accessToken).refresh_token(refreshToken).build();
         }
         else{
-            return null;
+            throw new Exception("This is not a seller");
         }
     }
 }

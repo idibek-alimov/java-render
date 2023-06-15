@@ -11,6 +11,7 @@ import maryam.models.product.Product;
 import maryam.models.user.User;
 import maryam.models.uservisit.UserVisits;
 import maryam.models.uservisit.Visit;
+import maryam.service.user.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -21,18 +22,18 @@ import java.util.Optional;
 
 @Service @RequiredArgsConstructor @Transactional
 public class VisitService {
-    private final UserRepository userRepository;
+//    private final UserRepository userRepository;
+    private final UserService userService;
     private final UserVisitRepository userVisitRepository;
     private final VisitRepository visitRepository;
     private final UserVisitService userVisitService;
     private final ProductRepository productRepository;
     private final ArticleRepository articleRepository;
     public void addVisit(Long id){
-        User user = userRepository.findByUsername((String) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal());
+        User user = userService.getCurrentUser();
         Optional<UserVisits> userVisitsOptional = userVisitRepository.findByUser(user);
         UserVisits userVisits;
-        if(!userVisitsOptional.isPresent()){
+        if(!userVisitsOptional.isPresent() && user!= null){
            userVisits = userVisitService.createUserVisits(user);
         }
         else{
@@ -53,10 +54,13 @@ public class VisitService {
         }
     }
     public List<Visit> getAllVisits(){
-        User user = userRepository.findByUsername((String) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal());
-        System.out.println(user);
-        return visitRepository.findAllByUserOrderByCreatedAt(user);
+        User user = userService.getCurrentUser();
+        if (user != null) {
+            return visitRepository.findAllByUserOrderByCreatedAt(user);
+        }
+        else {
+            return null;
+        }
     }
     public void deleteByArticleId(Long id){
         visitRepository.deleteByArticleId(id);

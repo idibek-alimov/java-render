@@ -16,18 +16,10 @@ public class ColorService {
     private final ColorRepository colorRepository;
     public Color addColor(Color color, Article article){
         try {
-        System.out.println(31);
         Optional<Color> optionalColor;
-        System.out.println(32);
-        System.out.println(color);
-
         optionalColor = colorRepository.findById(color.getId());
-
-        System.out.println(33);
         if (optionalColor.isPresent()){
-            System.out.println(34);
             article.setColor(optionalColor.get());
-            System.out.println(35);
             return optionalColor.get();
         }
         else{

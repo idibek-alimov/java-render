@@ -3,6 +3,7 @@ package maryam.service.product;
 import lombok.RequiredArgsConstructor;
 import maryam.data.product.ProductRepository;
 import maryam.dto.inventory.InventoryDTO;
+import maryam.dto.product.ProductCreateDTO;
 import maryam.models.category.Category;
 import maryam.models.product.*;
 import maryam.models.tag.Tag;
@@ -16,6 +17,7 @@ import maryam.service.user.UserService;
 import maryam.service.visit.VisitService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.transaction.Transactional;
@@ -30,39 +32,55 @@ public class ProductService implements ProductServiceInterface{
     private final DimentsionsService dimentsionsService;
     private final ProductGenderService productGenderService;
 
-    public Product createProduct(Product productInfo){
+    public Long createProduct(ProductCreateDTO productCreateDTO){
         User user = userService.getCurrentUser();
-        Product product = new Product(productInfo.getName(),productInfo.getDescription(),productInfo.getBrand(),user);
-        product = categoryService.addCategoryToProduct(product,productInfo.getCategory());
+        Product product = new Product()
+                .builder()
+                .name(productCreateDTO.getName())
+                .description(productCreateDTO.getDescription())
+                .brand(productCreateDTO.getBrand())
+                .user(user)
+                .build();
+        product = categoryService.addCategoryToProduct(product,productCreateDTO.getCategory());
         product = productRepository.save(product);
-        product.setDimensions(dimentsionsService.addDimensionsToProduct(productInfo.getDimensions(),product));
-        //product.addArticle(articleService.createArticleWithPicture(article,pictures,product));
-        if(productInfo.getTags()!=null || productInfo.getTags().size()!=0){
-            tagService.addTagToProduct(product,productInfo.getTags());
-        }
-        productGenderService.setGenderToProduct(product,productInfo.getProductGender());
+        product.setDimensions(dimentsionsService.addDimensionsToProduct(new Dimensions()
+                .builder()
+                        .width(productCreateDTO.getDimensions().getWidth())
+                        .height(productCreateDTO.getDimensions().getHeight())
+                        .length(productCreateDTO.getDimensions().getLength())
+                .build(),product));
         productRepository.save(product);
-        return product;
+        return product.getId();
     }
-    public Product updateProduct(Long id,Product product){
+    public Long updateProduct(Long id,ProductCreateDTO product) throws Error{
         Optional<Product> optionalProduct = productRepository.findById(id);
         if(optionalProduct.isPresent()){
-            Product presentProduct = optionalProduct.get().builder()
-                                    .name(product.getName())
-                                    .description(product.getDescription())
-                                    .brand(product.getBrand())
-                                    .build();
-            productGenderService.setGenderToProduct(presentProduct,product.getProductGender());
-            tagService.updateProductTags(presentProduct,product.getTags());
-            presentProduct.setDimensions(dimentsionsService.updateDimensions(product.getDimensions(),presentProduct));
-            return presentProduct;
+            Product presentProduct = optionalProduct.get();
+            presentProduct.setName(product.getName());
+            presentProduct.setDescription(product.getDescription());
+            presentProduct.setBrand(product.getBrand());
+            presentProduct.setDimensions(dimentsionsService.updateDimensions(new Dimensions()
+                    .builder()
+                    .width(product.getDimensions().getWidth())
+                    .height(product.getDimensions().getHeight())
+                    .length(product.getDimensions().getLength())
+                    .build(),presentProduct));
+            return presentProduct.getId();
         }
         else {
-            return product;
+            throw new Error("Product with id = "+id+"does not exist nigga;");
         }
 
     }
-
+    public Product getProduct(Long id) throws Exception{
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if(optionalProduct.isPresent()){
+            return optionalProduct.get();
+        }
+        else {
+            throw new Exception("Product with the given id does not exist");
+        }
+    }
     public void removeProduct(Long id) {
         productRepository.deleteById(id);
     }

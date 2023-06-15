@@ -3,9 +3,7 @@ package maryam.models.inventory;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import maryam.models.product.Article;
 import maryam.serializer.InventorySerializer;
 
@@ -13,9 +11,12 @@ import jakarta.persistence.*;
 
 @Entity
 @Table
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+
 //@JsonSerialize(using= InventorySerializer.class)
 public class Inventory {
     @Id
@@ -29,9 +30,8 @@ public class Inventory {
     private Double price;
     private Integer quantity = 0;
     private Boolean inStock = false;
-
-    @ManyToOne
-    private InventorySize inventorySize;
+    private Boolean available = true;
+    private String size;
 
     @JsonManagedReference
     @OneToOne(mappedBy = "inventory")

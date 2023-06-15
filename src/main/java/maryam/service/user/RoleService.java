@@ -7,6 +7,8 @@ import maryam.models.user.User;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,30 +22,50 @@ public class RoleService {
     public Role createRole(String name){
         return roleRepository.save(new Role(name));
     }
-    public User setUserRole(User user){
-        System.out.println("before");
-        Set<Role> roles = user.getRoles().stream().collect(Collectors.toSet());
-        System.out.println("after");
-        Role role = roleRepository.findByName("USER_ROLE");
+//    public User setUserRole(User user){
+//        //Set<Role> roles = user.getRoles().stream().collect(Collectors.toSet());
+//        Set<Role> roles = new HashSet<>();
+//        Role role = roleRepository.findByName("USER_ROLE");
+//        if(role!=null){
+//            roles.add(role);
+//        }
+//        else{
+//            roles.add(roleRepository.save(new Role("USER_ROLE")));
+//        }
+//        user.setRoles(roles);
+//        return user;
+//    }
+    public Role getOrCreateRole(String roleName){
+        Role role = roleRepository.findByName(roleName);
         if(role!=null){
-            roles.add(role);
+            return role;
         }
         else{
-            roles.add(roleRepository.save(new Role("USER_ROLE")));
+            return roleRepository.save(new Role(roleName));
+        }
+    }
+    public User setRole(User user,String roleName){
+        Set<Role> roles = user.getRoles().stream().collect(Collectors.toSet());
+        Role role = getOrCreateRole(roleName);
+        boolean contains = false;
+        for (Role role1:roles){
+            if(role.getName().equals(role1.getName())){
+                contains = true;
+            }
+        }
+        if (!contains){
+            roles.add(role);
         }
         user.setRoles(roles);
         return user;
     }
+    public User setUserRole(User user){
+        return setRole(user,"USER_ROLE");
+    }
     public User setSellerRole(User user){
-        Set<Role> roles = user.getRoles().stream().collect(Collectors.toSet());
-        Role role = roleRepository.findByName("SELLER_ROLE");
-        if(role!=null){
-            roles.add(role);
-        }
-        else{
-            roles.add(roleRepository.save(new Role("SELLER_ROLE")));
-        }
-        user.setRoles(roles);
-        return user;
+        return setRole(user,"SELLER_ROLE");
+    }
+    public User setManagerRole(User user){
+        return setRole(user,"MANAGER_ROLE");
     }
 }

@@ -2,10 +2,7 @@ package maryam.models.product;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import maryam.models.category.Category;
 import maryam.models.tag.Tag;
 import maryam.models.user.User;
@@ -19,16 +16,13 @@ import java.util.List;
 
 @Entity
 @Table
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//@JsonSerialize(using = NewProductSerializer.class)
 @JsonSerialize(using= ProductSerializer.class)
 @Builder
-//@JsonView(ProductSerializer.class)
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Product implements Comparable<Product>{
-//    public  enum Gender {Male,Female};
     @Id
     @GeneratedValue(generator = "product_id_generator", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "product_id_generator",initialValue = 1, allocationSize = 1,sequenceName = "Product_id_generator")
@@ -61,7 +55,7 @@ public class Product implements Comparable<Product>{
         this.createdAt = new Date();
     }
 
-        @JsonManagedReference
+    @JsonManagedReference
     @Column
     @OneToMany(
             mappedBy = "product",

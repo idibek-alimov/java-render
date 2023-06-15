@@ -16,9 +16,10 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
     @Query(value = "SELECT * FROM article WHERE product_id IN " +
             "(SELECT product_id FROM tag_product WHERE tag_id in (?1)) AND id != (?2) AND active=true",nativeQuery = true)
     public Page<Article> findSimilarArticles(List<Tag> tags,Long id, Pageable pageable);
+
     @Query(value = "SELECT * FROM article WHERE product_id IN (SELECT id" +
             " FROM product product WHERE ?1 % ANY(STRING_TO_ARRAY(product.name,' ')) or" +
-            " ?1 % ANY(STRING_TO_ARRAY(product.description,' '))) AND active=true", nativeQuery = true)
+            " ?1 % ANY(STRING_TO_ARRAY(product.description,' ')))", nativeQuery = true)
     List<Article> findBySimilarName(String name, Pageable pageable);
 
     @Query(value = "SELECT * FROM article WHERE product_id IN " +
@@ -40,7 +41,7 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
     List<Article> getByUserAndRemovableTrue(Long id);
 
     @Query(value = "SELECT * FROM article WHERE product_id IN " +
-            "(SELECT id FROM product WHERE name=?1) AND active=true", nativeQuery = true)
+            "(SELECT id FROM product WHERE name=?1)", nativeQuery = true)
     List<Article> getByName(String name,Pageable pageable);
     @Query(value="SELECT * FROM article WHERE id IN" +
             "(SELECT article_id FROM liked_products WHERE user_id=?1) AND status=1",nativeQuery = true)
@@ -55,6 +56,7 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
             "INNER JOIN visit ON article.id = visit.article_id AND article.active=true GROUP BY article.id ORDER BY COUNT(article.id) DESC," +
             "MAX(visit.created_at) DESC) as article LIMIT ?1",nativeQuery = true)
     List<Article> getMostRecentVisitedArticles(Integer limit);
+
 //    @Query(value="SELECT article_id FROM visit GROUP BY article_id ORDER BY COUNT(article_id) DESC LIMIT ?1",nativeQuery = true)
 //    Set<Long> getMostCommonVisits(Integer limit);
 

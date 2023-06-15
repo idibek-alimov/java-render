@@ -56,7 +56,6 @@ public class SecurityConfig{// extends WebSecurityConfigurerAdapter {
                         List.of("GET","POST","PUT","DELETE"));
                     config.setAllowedHeaders(
                         List.of("Authorization","Content-Type","Cache-Control","Access-Control-Allow-Origin","Access-Control-Allow-Methods","Access-Control-Allow-Headers"));
-
                     config.setExposedHeaders(
                         List.of("Authorization","Content-Type","Cache-Control","Access-Control-Allow-Origin","Access-Control-Allow-Methods","Access-Control-Allow-Headers"));
 
@@ -67,15 +66,18 @@ public class SecurityConfig{// extends WebSecurityConfigurerAdapter {
                 //.cors().disable()
                 .csrf().disable()
                 .authorizeHttpRequests()
-//                .requestMatchers("/api/user/test").hasRole("SELLER")
-                .requestMatchers("api/*")
+                .requestMatchers("/api/user/authenticate/**")
                 .permitAll()
-                .requestMatchers("/api/user/authenticate")
+                .requestMatchers("/api/product/seller/**","/api/article/seller/**","/api/user/seller/**")
+                .hasRole("SELLER")
+                .requestMatchers("/api/item/manager/*")
+                .hasRole("MANAGER")
+                .requestMatchers("/api/user/register")
                 .permitAll()
-                .requestMatchers("/api/**")
-                .permitAll()
-                .requestMatchers("api/*")
-                .permitAll()
+//                .requestMatchers("/api/**")
+//                .permitAll()
+//                .requestMatchers("/api/*")
+//                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

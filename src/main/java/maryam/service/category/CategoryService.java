@@ -20,6 +20,15 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryPropertiesRepository categoryPropertiesRepository;
 
+    public Category getCategoryById(Long id){
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if (optionalCategory.isPresent()){
+            return optionalCategory.get();
+        }
+        else{
+            return null;
+        }
+    }
     public Category getCategory(Category category){
         Optional<Category> optionalCategory = categoryRepository.findByName(category.getName());
         if(optionalCategory.isPresent()) {
@@ -29,22 +38,18 @@ public class CategoryService {
             return null;
         }
     }
-    public Product addCategoryToProduct(Product product, Category category){
-        category = getCategory(category);
+    public Product addCategoryToProduct(Product product,Long id){
+        Category category = getCategoryById(id);
         if (category!=null){
             product.setCategory(category);
         }
         return product;
     }
-    public Product updateCategoryProduct(Product product, Category category){
-
-        if(!product.getCategory().getName().equals(category.getName())) {
-
-            return addCategoryToProduct(product, category);
-
+    public Product updateCategoryProduct(Product product,Long id){
+        if(!product.getCategory().getId().equals(id)) {
+            return addCategoryToProduct(product,id);
         }
         else{
-
             return product;
         }
     }

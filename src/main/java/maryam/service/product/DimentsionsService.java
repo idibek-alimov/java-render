@@ -24,7 +24,6 @@ public class DimentsionsService {
         return dimensions;
     }
     public Dimensions updateDimensions(Dimensions dimensions,Product product){
-
         Optional<Dimensions> optionalDimensions = dimensiontsRepository.getByProduct(product);
         if (optionalDimensions.isPresent()){
             Dimensions updatableDimensions = optionalDimensions.get();

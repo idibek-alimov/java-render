@@ -1,17 +1,17 @@
 package maryam.models.product;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Dimensions {
     @Id
     @GeneratedValue(generator = "dimensions_id_generator", strategy = GenerationType.SEQUENCE)

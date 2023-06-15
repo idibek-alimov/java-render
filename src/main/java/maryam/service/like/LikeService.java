@@ -9,6 +9,7 @@ import maryam.models.like.Like;
 import maryam.models.product.Article;
 import maryam.models.product.Product;
 import maryam.models.user.User;
+import maryam.service.user.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,8 @@ import java.util.Optional;
 @Service @RequiredArgsConstructor @Transactional
 public class LikeService {
     private final LikeRepository likeRepository;
-    private final UserRepository userRepository;
+//    private final UserRepository userRepository;
+    private final UserService userService;
     private final ProductRepository productRepository;
     private final ArticleRepository articleRepository;
 
@@ -26,22 +28,28 @@ public class LikeService {
         //System.out.println("inside ckeck likes");
         //Optional<Product> optionalProduct = productRepository.findById(id);
         Optional<Article> optionalArticle = articleRepository.findById(id);
-        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return likeRepository.findByArticleAndUser(optionalArticle.get(),user).isPresent();
+        User user = userService.getCurrentUser();
+        System.out.println(user);
+        if (user != null) {
+            return likeRepository.findByArticleAndUser(optionalArticle.get(), userService.getCurrentUser()).isPresent();
+        }
+        else {
+            return false;
+        }
     }
 
     public Like like_article(Long id){
         //Optional<Product> optionalProduct = productRepository.findById(id);
         Optional<Article> optionalArticle = articleRepository.findById(id);
         try{
-            User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-            Optional<Like> optionalLike = likeRepository.findByArticleAndUser(optionalArticle.get(),user);
+            //User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            Optional<Like> optionalLike = likeRepository.findByArticleAndUser(optionalArticle.get(),userService.getCurrentUser());
             if(optionalLike.isPresent()){
                  likeRepository.delete(optionalLike.get());
                  return null;
             }
             else{
-                likeRepository.save(new Like(optionalArticle.get(),user));
+                likeRepository.save(new Like(optionalArticle.get(),userService.getCurrentUser()));
             }
         }
         catch (Exception e){

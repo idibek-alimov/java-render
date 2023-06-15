@@ -23,41 +23,31 @@ public class InventoryService implements InventoryServiceInterface{
     private final InventoryRepository inventoryRepository;
     private final SellerPropertiesService sellerPropertiesService;
     private final CargoBarcodeService cargoBarcodeService;
-    private final InventorySizeService inventorySizeService;
     private final UserService userService;
     public Inventory addInventory(Inventory inventory,Article article){
-        if (inventory.getInventorySize()!=null){
-            inventory.setInventorySize(inventorySizeService.addInventorySize(inventory,inventory.getInventorySize().getSize()));
-        }
+//        if (inventory.getInventorySize()!=null){
+//            inventory.setInventorySize(inventorySizeService.addInventorySize(inventory,inventory.getInventorySize().getSize()));
+//        }
+        inventory.setAvailable(true);
         inventory = inventoryRepository.save(inventory);
         inventory.setArticle(article);
         return inventory;
-    }
-    @Transactional
-    public List<Inventory> addInventories(List<InventoryDTO> inventories, Article article) {
-        List<Inventory> inventoryList = new ArrayList<>();
-        Inventory inventory;
-        Integer counter = 0;
-        for(InventoryDTO inventoryDTO: inventories){
-            inventory = inventoryRepository.save(new Inventory(article,inventoryDTO.getPrice(),inventoryDTO.getQuantity()));
-            if(inventoryDTO.getSize()!=null) {
-                inventorySizeService.addInventorySize(inventory, inventoryDTO.getSize());
-            }
-            cargoBarcodeService.createBarcode(inventory,counter);
-            inventoryList.add(inventoryRepository.save(inventory));
-            counter++;
-        }
-        return inventoryList;
     }
     public List<Inventory> createInventories(List<Inventory> inventories,Article article){
         List<Inventory> inventoryList = new ArrayList<>();
         Inventory inventory;
         Integer counter = 0 ;
         for(Inventory itemInventory:inventories){
-            inventory = inventoryRepository.save(new Inventory(article,itemInventory.getPrice(),itemInventory.getQuantity()));
-            if(itemInventory.getInventorySize()!=null){
-                inventorySizeService.addInventorySize(inventory,itemInventory.getInventorySize().getSize());
-            }
+            inventory = inventoryRepository.save(new Inventory()
+                    .builder()
+                            .article(article)
+                            .size(itemInventory.getSize())
+                            .quantity(itemInventory.getQuantity())
+                            .price(itemInventory.getPrice())
+                            .inStock(true)
+                            .available(true)
+                            .build());
+
             cargoBarcodeService.createBarcode(inventory,counter);
             inventoryList.add(inventoryRepository.save(inventory));
             counter++;
@@ -78,41 +68,38 @@ public class InventoryService implements InventoryServiceInterface{
         inventory.setQuantity(quantity);
         return inventory;
     }
+    public void deleteInventoriesFromArticle(List<Long> idList,Article article){
+        for(Inventory inventory: article.getInventory()){
+            if(!idList.contains(inventory.getId())){
+                System.out.println("deleting inventory with the id of "+inventory.getId());
+                inventory.setAvailable(Boolean.FALSE);
+                //System.out.println(inventoryRepository.findById(inventory.getId()));
+            }
+        }
+    }
     public void updateInventories(List<Inventory> inventories,Article article){
         Inventory inventoryPlaceholder;
         List<Inventory> inventoryList = new ArrayList<>();
+        List<Long> idList = new ArrayList<>();
         for(Inventory inventory:inventories){
+            System.out.println(inventory);
             if (inventory.getId()!=null){
                 inventoryPlaceholder = inventoryRepository.findById(inventory.getId()).get();
-                if (inventoryPlaceholder.getPrice()!=inventory.getPrice())
-                    inventoryPlaceholder.setPrice(inventory.getPrice());
-                if (inventoryPlaceholder.getInventorySize().getSize()!=inventory.getInventorySize().getSize())
-                    inventorySizeService.addInventorySize(inventoryPlaceholder,inventory.getInventorySize().getSize());
+                inventoryPlaceholder.setPrice(inventory.getPrice());
+                inventoryPlaceholder.setQuantity(inventory.getQuantity());
+                inventoryPlaceholder.setSize(inventory.getSize());
+                idList.add(inventoryPlaceholder.getId());
                 inventoryList.add(inventoryPlaceholder);
             }
             else {
                 Inventory newInventory = addInventory(inventory,article);
                 article.getInventory().add(newInventory);
+                idList.add(newInventory.getId());
                 inventoryList.add(newInventory);
             }
         }
-    }
-    public CustomerInventoryDto inventoryToCustomerDto(Inventory inventory,Integer discount){
-        CustomerInventoryDto inventoryDto = new CustomerInventoryDto().builder()
-                .id(inventory.getId())
-                .originalPrice(inventory.getPrice())
-                .quantity(inventory.getQuantity())
-                .inStock(inventory.getInStock())
-                .barcode(inventory.getCargoBarcode().getBarcode())
-                .build();
-        if(discount!=null) {
-            Double discountPrice = Math.floor(inventory.getPrice() * (100 - discount)/100);
-            inventoryDto.setDiscountPrice(discountPrice);
-        }
-
-        if(inventory.getInventorySize()!=null){
-            inventoryDto.setSize(inventory.getInventorySize().getSize());
-        }
-        return inventoryDto;
+//        System.out.println("after sorting inventories");
+//        System.out.println(idList);
+        deleteInventoriesFromArticle(idList,article);
     }
 }

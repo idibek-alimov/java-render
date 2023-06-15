@@ -3,10 +3,8 @@ package maryam.models.product;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.extern.jackson.Jacksonized;
 import maryam.models.inventory.Inventory;
 import maryam.models.picture.Picture;
 import maryam.serializer.ArticleSerializer;
@@ -17,19 +15,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonSerialize(using= ArticleSerializer.class)
 @Builder
+@Jacksonized
+@JsonSerialize(using= ArticleSerializer.class)
 public class Article {
     public  enum Status {NoPicture,Active,Removable,Deleted};
     @Id
     @GeneratedValue(generator = "article_id_generator", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "article_id_generator", sequenceName = "Article_id_generator",allocationSize=1)
     private Long id;
-
 
     private Status status;
 

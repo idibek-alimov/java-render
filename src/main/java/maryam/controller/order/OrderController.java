@@ -23,7 +23,7 @@ public class OrderController {
 
     @PostMapping(path ="/add")
     public Long addNewOrder(@RequestBody List<ItemHolder> items) throws Exception{
-        //System.out.println(items);
+        System.out.println(items);
         Order order = orderService.addOrder(items);
         return order.getId();
     }
@@ -54,16 +54,8 @@ public class OrderController {
     }
     @GetMapping(path="/delivered/true")
     public List<Order> orderByUserDelivered(){
-
         return null; //orderService.listOfDeliveredOrders();
     }
-
-    //@JsonView(View.OnlyId.class)
-//    @PostMapping(path ="")
-//    public Order addOrder(@RequestPart("items") List<ItemHolder> items){
-//        System.out.println("came here");
-//        return orderService.addOrder(items);
-//    }
 
     @PutMapping("/set/shipping/{id}")
     public ResponseEntity<Order> checkoutOrder(@PathVariable("id") Long id){
@@ -97,19 +89,20 @@ public class OrderController {
         return null;// orderService.uncheckedOrders();
     }
 
-    @GetMapping(path = "/owner/today/shipping")
+    @GetMapping(path = "/seller/today/shipping")
     public List<DayOrderStatisticDTO> todayOrdersShipping(){
         return orderService.findTodayOrdersShipping();
     }
-    @GetMapping(path = "/owner/week/shipping")
+    @GetMapping(path = "/seller/week/shipping")
     public List<WeekOrderClass> weekOrdersShipping(){
+        System.out.println("got here");
         return orderService.findWeekOrdersShipping();
     }
-    @GetMapping(path = "/owner/today/delivered")
+    @GetMapping(path = "/seller/today/delivered")
     public List<DayOrderStatisticDTO> todayOrdersDelivered() {
         return orderService.findTodayOrdersDelivered();
     }
-    @GetMapping(path = "/owner/week/delivered")
+    @GetMapping(path = "/seller/week/delivered")
     public List<WeekOrderClass> weekOrdersDelivered(){
         return orderService.findWeekOrdersDelivered();
     }

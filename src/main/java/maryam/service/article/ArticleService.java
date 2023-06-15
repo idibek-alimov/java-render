@@ -23,6 +23,7 @@ import maryam.service.visit.VisitService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +46,9 @@ public class ArticleService {
     private final DiscountService discountService;
     private final LikeService likeService;
 
+    public  Page<Article> getArticlesByPage(Integer page,Integer amount){
+        return articleRepository.findAll(PageRequest.of(page,amount, Sort.by("createdAt").descending()));
+    }
     public Product addArticleWithPicture(Long id,Article article,List<MultipartFile> pictures){
         Optional<Product> optionalProduct =  productRepository.findById(id);
         if(optionalProduct.isPresent() && optionalProduct.get().getUser().getId() == userService.getCurrentUser().getId()){
@@ -67,9 +71,8 @@ public class ArticleService {
     }
     public Article createArticleWithoutPicture(Article article, Product product){
         Article createdArticle = articleRepository.save((new Article(product,article.getSellerArticle())));
-        createdArticle = articleRepository.save(createdArticle);
         createdArticle.setInventory(inventoryService.createInventories(article.getInventory(),createdArticle));
-        if(article.getDiscounts()!=null && article.getDiscounts().get(0).getPercentage()!=0){
+        if(article.getDiscounts()!=null && article.getDiscounts().size()!=0 && article.getDiscounts().get(0).getPercentage()!=0){
            discountService.addDiscount(createdArticle,article.getDiscounts().get(0).getPercentage());
         }
         createdArticle = articleRepository.save(createdArticle);
@@ -87,19 +90,11 @@ public class ArticleService {
         return createdArticle;
     }
 
-    public Article updateArticle(Long articleId,List<InventoryDTO> inventories, List<MultipartFile> newPictures,List<String> leftoverPictures,String sellerArticle, Product product){
-        Article article = articleRepository.getById(articleId);
-        article.setSellerArticle(sellerArticle);
-        pictureService.removePictures(leftoverPictures,article);
-        article.setPictures(pictureService.addPictures(newPictures,article));
-        articleRepository.save(article);
-        article.setInventory(inventoryService.addInventories(inventories,article));
-        return article;
-    }
     public Article updateArticleWithoutPicture(Long articleId,Article article,List<Long> picIdList){
         Optional<Article> optionalArticle = articleRepository.findById(articleId);
         if(optionalArticle.isPresent()) {
             Article presentArticle = optionalArticle.get();
+            presentArticle.setSellerArticle(article.getSellerArticle());
             if(article.getDiscounts()!=null && article.getDiscounts().get(0).getPercentage()!=0){
                 discountService.addDiscount(presentArticle,article.getDiscounts().get(article.getDiscounts().size()-1).getPercentage());
             }
@@ -123,13 +118,12 @@ public class ArticleService {
     public Optional<Article> getArticle(Long id){
         String user = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         if(user!="anonymousUser"){
-            //System.out.println("hello there . General Kenobe");
             visitService.addVisit(id);
         }
         return articleRepository.findById(id);
     }
-    public CustomerArticleDto getArticleDto(Long id){
-        return articleToDto(getArticle(id).get());
+    public Article getArticleDto(Long id){
+        return getArticle(id).get();
     }
     public List<Article> getArticlesInProduct(Long id){
         return articleRepository.findByProductId(id);
@@ -183,32 +177,5 @@ public class ArticleService {
         catch (Exception e){
             throw new RuntimeException("Not authenticated exception ,bitch");
         }
-    }
-    public CustomerArticleDto articleToDto(Article article){
-        CustomerArticleDto articleDto = new CustomerArticleDto()
-                .builder()
-                .id(article.getId())
-                .productId(article.getProduct().getId())
-                .likes(likeService.check_like(article.getId()))
-                .name(article.getProduct().getName())
-                .brand(article.getProduct().getBrand())
-                .description(article.getProduct().getDescription())
-                .category(article.getProduct().getCategory().getName())
-                .build();
-        if(article.getColor()!=null){
-            articleDto.setColor(article.getColor().getName());
-        }
-        if(article.getDiscounts().size()!=0) {
-            articleDto.setDiscount(article.getDiscounts().get(article.getDiscounts().size() - 1).getPercentage());
-            articleDto.setDiscounts(article.getDiscounts().stream().map(Discount::getPercentage).collect(Collectors.toList()));
-        }
-        if(article.getProduct().getProductGender()!=null){
-            articleDto.setGender(article.getProduct().getProductGender().getName());
-        }
-        if(article.getPictures()!=null && article.getPictures().size()!=0){
-            articleDto.setPictures(article.getPictures().stream().map(Picture::getName).collect(Collectors.toList()));
-        }
-        articleDto.setInventories(article.getInventory().stream().map(inventory -> inventoryService.inventoryToCustomerDto(inventory,articleDto.getDiscount())).collect(Collectors.toList()));
-        return articleDto;
     }
 }

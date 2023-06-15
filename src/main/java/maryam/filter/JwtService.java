@@ -25,23 +25,12 @@ public class JwtService {
     }
     public <T> T extractClaim(String token, Function<Claims,T> claimsResolver){
         final Claims claims = extractAllClaims(token);
-        log.info("claims");
-        System.out.println(claims);
-        System.out.println("subject");
-        System.out.println(claims.getSubject());
         return claimsResolver.apply(claims);
     }
     public String generateToken(UserDetails userDetails,Integer month){
         return generateToken(new HashMap<>(),userDetails,month);
     }
-//    public String generateAccessToken(UserDetails userDetails){
-//        return generateToken(new HashMap<>(),userDetails,1);
-//    }
-//    public String generateRefreshToken(UserDetails userDetails){
-//        return generateToken(new HashMap<>(),userDetails,2);
-//    }
     public Boolean isTokenValid(String token,UserDetails userDetails){
-
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()))&& !isTokenExpired(token);
     }
