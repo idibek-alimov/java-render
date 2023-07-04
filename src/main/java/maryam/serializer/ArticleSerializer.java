@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import maryam.models.inventory.Inventory;
 import maryam.models.picture.Picture;
 import maryam.models.product.Article;
+import maryam.models.product.Discount;
 import maryam.models.product.Product;
 import maryam.service.like.LikeService;
 import maryam.storage.FileStorageService;
@@ -35,10 +36,18 @@ public class ArticleSerializer extends StdSerializer<Article> {
         jgen.writeStartObject();
         jgen.writeNumberField("id",article.getId());
         jgen.writeBooleanField("likes",likeService.check_like(article.getId()));
-        jgen.writeObjectField("color",article.getColor());
-        jgen.writeArrayFieldStart("inventories");
+        if (article.getColor()!=null) {
+            jgen.writeObjectField("color", article.getColor());
+        }
+        jgen.writeStringField("sellerArticle",article.getSellerArticle());
+        jgen.writeArrayFieldStart("inventory");
         for(Inventory inventory:article.getInventory()){
             jgen.writeObject(inventory);
+        }
+        jgen.writeEndArray();
+        jgen.writeArrayFieldStart("discounts");
+        for(Discount discount:article.getDiscounts()){
+            jgen.writeObject(discount);
         }
         jgen.writeEndArray();
         jgen.writeArrayFieldStart("pictures");
@@ -48,36 +57,13 @@ public class ArticleSerializer extends StdSerializer<Article> {
         jgen.writeEndArray();
         jgen.writeNumberField("product_id",article.getProduct().getId());
         jgen.writeStringField("name",article.getProduct().getName());
+        jgen.writeStringField("brand",article.getProduct().getBrand());
+        if (article.getProduct().getProductGender()!=null){
+            jgen.writeStringField("gender",article.getProduct().getProductGender().getName());
+        }
+        jgen.writeStringField("category",article.getProduct().getCategory().getName());
         jgen.writeStringField("description",article.getProduct().getDescription());
-
-////        jgen.writeObjectField("category",product.getCategory());
-//        jgen.writeStringField("name",product.getName());
-//        jgen.writeNumberField("user",product.getUser().getId());
-//        //jgen.writeNumberField("price",product.getPrice());
-////        jgen.writeBooleanField("likes",likeService.check_like(product.getId()));
-//        jgen.writeStringField("description",product.getDescription());
-//        jgen.writeArrayFieldStart("articles");
-//        for(Article article:product.getArticles()){
-//            jgen.writeObject(article);
-//        }
-//        jgen.writeEndArray();
-//        jgen.writeObjectField("id",product.getArticles().get(0));
-//        jgen.writeArrayFieldStart("articles");
-//        for(Article article:product.getArticles()){
-//            jgen.writeNumberField("article_id",article.getId());
-////            jgen.writeStringField("color",article.getColor().getName());
-//        }
-//        jgen.writeEndArray();
-//        jgen.writeArrayFieldStart("pics");
-//        for (Picture pic: product.getArticles()){
-//            jgen.writeObject(fileStorageService.load(pic.getName()).getURL());
-//        }
-//        jgen.writeEndArray();
-//        jgen.writeArrayFieldStart("inventory");
-//        for(Inventory inventory: product.getInventory()){
-//            jgen.writeObject(inventory);
-//        }
-//        jgen.writeEndArray();
+        jgen.writeObjectField("dimensions",article.getProduct().getDimensions());
         jgen.writeEndObject();
     }
 

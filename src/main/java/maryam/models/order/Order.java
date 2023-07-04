@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import maryam.models.product.Product;
@@ -14,7 +15,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,24 +23,34 @@ import java.util.List;
 @Entity
 @Table(name = "user_order")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
+
+    public  enum Status {InQueue,Shipping,Arrived,Delivered};
     @JsonView(View.OnlyId.class)
     @Id
     @GeneratedValue(generator = "orders_id_generator", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "orders_id_generator", sequenceName = "Orders_id_generator",allocationSize=1)
     private Long id;
-    @ColumnDefault("false")
-    private Boolean checked;
 
+<<<<<<< HEAD
     @ColumnDefault("false")
     private Boolean delivered;
+=======
+    private Status status = Status.InQueue;
+>>>>>>> testings
     @JsonView(View.OnlyId.class)
     @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+<<<<<<< HEAD
+=======
+    private String address;
+
+>>>>>>> testings
     @JsonManagedReference
     @Column(name="items")
     @OneToMany(
@@ -57,8 +68,6 @@ public class Order {
     private LocalDateTime updated_at;
     public Order(User user1){
         this.user = user1;
-        this.checked = false;
-        this.delivered = false;
     }
     @PrePersist
     public void setcreationtime(){

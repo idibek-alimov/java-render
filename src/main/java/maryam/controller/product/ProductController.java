@@ -1,65 +1,49 @@
 package maryam.controller.product;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import maryam.data.user.UserRepository;
-import maryam.models.inventory.Inventory;
-import maryam.models.product.Color;
-import maryam.models.product.Product;
+import maryam.dto.inventory.InventoryDTO;
+import maryam.dto.product.ProductCreateDTO;
+import maryam.dto.product.ProductUpdateDTO;
+import maryam.models.category.Category;
+import maryam.models.product.*;
 import maryam.models.tag.Tag;
-import maryam.models.user.User;
-import maryam.models.uservisit.Visit;
-import maryam.serializer.NewProductSerializer;
-import maryam.serializer.ProductSerializer;
-import maryam.serializer.View;
 import maryam.service.like.LikeService;
 import maryam.service.product.ProductService;
 import maryam.service.visit.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.text.html.Option;
 import java.util.*;
+import java.util.stream.Collectors;
 
-@Slf4j
 @RestController
 @RequestMapping(path="/api/product")
+@RequiredArgsConstructor
 public class ProductController {
-    @Autowired
-    private  ProductService productService;
-    @Autowired
-    private  VisitService visitService;
-    @Autowired
-    public LikeService likeService;
-    @GetMapping(path="/{page}/{amount}")
-    public Page<Product> productList(@PathVariable("page")Integer page,@PathVariable("amount")Integer amount){
-        return productService.listOfProducts(page,amount);
+    private final ProductService productService;
+    @PostMapping(path="/seller/create",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
+    public Long createProduct(
+            @RequestPart("product") ProductCreateDTO product
+            ){
+        System.out.println("product create");
+        return  productService.createProduct(product);
     }
-    @GetMapping(path="resentvisited/{page}/{amount}")
-    public List<Product> resentVisited(@PathVariable("page")Integer page,@PathVariable("amount")Integer amount){
-        return productService.getResentVisits(page,amount);
+    @PostMapping(path="/seller/update/{id}",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
+    public Long updateProduct(
+            @RequestPart("product") ProductCreateDTO product,
+                                 @PathVariable("id")Long id) throws Error{
+        return productService.updateProduct(id,product);
     }
-    @PostMapping(path="",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Product createProduct(@RequestPart("picture") List<MultipartFile> pictures,
-                                 @RequestPart("product") Product product,
-                                 @RequestPart("size")List<Inventory> inventories,
-                                 @RequestPart("tags")List<Tag> tags,
-                                 @RequestPart("color")Color color){
-        System.out.println("inside post");
-        for(Inventory inventory:inventories){
-            System.out.println(inventory);
-        }
-        return productService.addProduct(product,inventories,color,pictures,tags);
-
+    @GetMapping(path = "/seller/{id}")
+    public ProductUpdateDTO getProduct(@PathVariable("id") Long id) throws Exception{
+        return productToDto(productService.getProduct(id));
     }
+<<<<<<< HEAD
     @PostMapping(path="/create",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_OCTET_STREAM_VALUE,MediaType.IMAGE_JPEG_VALUE})
     public Product newCreateProduct(@RequestPart("product") Product product,
                                  @RequestPart("tags")List<Tag> tags,
@@ -148,4 +132,32 @@ public class ProductController {
         return productService.getByPage(name,page,amount);
     }
 
+=======
+    @DeleteMapping(path="/seller/delete/{id}")
+    public void deleteProduct(@PathVariable("id")Long id){
+        productService.removeProduct(id);
+    }
+
+    public ProductUpdateDTO productToDto(Product product){
+        return new ProductUpdateDTO()
+                .builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .brand(product.getBrand())
+                .tags(product.getTags().stream().map(tag -> tag.getName()).collect(Collectors.toList()))
+                .category(product.getCategory())
+                .dimensions(product.getDimensions())
+//                .articles(product.getArticles().stream().map(article -> new ArticleCreateDTO()
+//                        .builder()
+//                                .color(article.getColor())
+//                                .sellerArticle(article.getSellerArticle())
+//                                .inventory(article.getInventory())
+//                                .pictures(article.getPictures())
+//                        .build())
+//                        .collect(Collectors.toList()))
+                .build();
+        //return null;
+    }
+>>>>>>> testings
 }

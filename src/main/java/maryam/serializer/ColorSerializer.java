@@ -25,6 +25,8 @@ public class ColorSerializer extends StdSerializer<Color> {
         jgen.writeStartObject();
         jgen.writeNumberField("id",color.getId());
         jgen.writeStringField("name",color.getName());
+        jgen.writeStringField("nameRU",color.getNameTJ());
+        jgen.writeStringField("nameTJ",color.getNameRU());
         jgen.writeEndObject();
     }
 }

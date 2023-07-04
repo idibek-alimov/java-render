@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import maryam.models.user.User;
 
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table

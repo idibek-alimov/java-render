@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import maryam.models.like.Like;
 import maryam.service.like.LikeService;
 import org.springframework.web.bind.annotation.*;
-
+//
 @RestController
 @RequestMapping(path = "/api/like")
 @RequiredArgsConstructor
@@ -14,6 +14,6 @@ public class LikeController {
 
     @GetMapping(path = "/{id}")
     public Like likeProduct(@PathVariable("id") Long id){
-        return likeService.like_article(id);
+        return likeService.likeArticle(id);
     }
 }

@@ -11,7 +11,7 @@ import maryam.models.user.User;
 import maryam.serializer.ProductSerializer;
 import maryam.serializer.VisitSerializer;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -31,13 +31,18 @@ public class Visit {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
 //    @JsonIgnoreProperties({"category","name","user","description","price","pictures","inventory"})
+<<<<<<< HEAD
     public Product product;
 
+=======
+    //public Product product;
+    private Article article;
+>>>>>>> testings
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     @ManyToOne
-    public User user;
-
+    //public User user;
+    private User user;
     private Date createdAt;
 
     public Visit(User user,Product product){

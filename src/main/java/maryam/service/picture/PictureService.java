@@ -8,7 +8,11 @@ import maryam.models.product.Product;
 import maryam.storage.FileStorageService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+<<<<<<< HEAD
 import javax.transaction.Transactional;
+=======
+import jakarta.transaction.Transactional;
+>>>>>>> testings
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +32,17 @@ public class PictureService implements PictureServiceInterface{
         List<Picture> pictureList = new ArrayList<>();
         Picture newPic;
         for(MultipartFile pic:pictures){
+<<<<<<< HEAD
             System.out.println("one");
             picname = storageService.save(pic);
             System.out.println("two");
             newPic = new Picture(picname);
             System.out.println("three");
+=======
+            System.out.println(pic);
+            picname = storageService.save(pic);
+            newPic = new Picture(picname);
+>>>>>>> testings
             newPic.setArticle(article);
             System.out.println("four");
             pictureList.add(pictureRepository.save(newPic));
@@ -41,6 +51,42 @@ public class PictureService implements PictureServiceInterface{
         return pictureList;
     }
 
+    public void removePictures(List<String> leftoverPictures,Article article){
+        List<Picture> pictureList = new ArrayList<>();
+        List<Picture> deletePictureList = new ArrayList<>();
+        for(Picture picture:article.getPictures()){
+            if(leftoverPictures.contains(picture.getName())){
+               deletePictureList.add(picture);
+            }
+            else {
+                pictureList.add(picture);
+            }
+        }
+        pictureRepository.deleteAll(deletePictureList);
+        article.setPictures(pictureList);
+    }
+    public void removePicturesFromArticle(List<Long> picIdList,Article article){
+        List<Picture> deletePics = new ArrayList<>();
+        List<Picture> picList = new ArrayList<>();
+        System.out.println(picIdList);
+        for (Picture picture:article.getPictures()){
+            System.out.println(picture.getId());
+            System.out.println(!picIdList.contains(picture.getId()));
+            if (!picIdList.contains(picture.getId())){
+                deletePics.add(picture);
+            }
+            else {
+                picList.add(picture);
+            }
+        }
+        System.out.println(deletePics.size());
+        pictureRepository.deleteAll(deletePics);
+        if(picIdList.size()==0){
+            article.setStatus(Article.Status.NoPicture);
+        }
+        article.setPictures(picList);
+
+    }
     @Override
     public void removePicture(Picture picture) {
         pictureRepository.delete(picture);

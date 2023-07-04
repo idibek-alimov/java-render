@@ -2,85 +2,63 @@ package maryam.models.product;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import maryam.models.category.Category;
-import maryam.models.inventory.Inventory;
-import maryam.models.picture.Picture;
 import maryam.models.tag.Tag;
 import maryam.models.user.User;
 import maryam.serializer.ProductSerializer;
 
 
+<<<<<<< HEAD
 import javax.persistence.*;
+=======
+import jakarta.persistence.*;
+>>>>>>> testings
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//@JsonSerialize(using = NewProductSerializer.class)
 @JsonSerialize(using= ProductSerializer.class)
-//@JsonView(ProductSerializer.class)
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@Builder
 public class Product implements Comparable<Product>{
-
     @Id
     @GeneratedValue(generator = "product_id_generator", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "product_id_generator",initialValue = 1, allocationSize = 1,sequenceName = "Product_id_generator")
-    //@JsonView(View.OnlyId.class)
     private Long id;
-
-//    @JsonView(View.Detailed.class)
     @ManyToOne
-//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-//    @JsonIdentityReference(alwaysAsId = true)
     private Category category;
 
-    //@JsonView(View.Detailed.class)
     private String name;
+    private String brand;
 
+<<<<<<< HEAD
     //@JsonView(View.Detailed.class)
     @ManyToOne
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
 //    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 //    @JsonIdentityReference(alwaysAsId = true)
+=======
+    @ManyToOne
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+>>>>>>> testings
     private User user;
 
-//    @JsonManagedReference
-//    @OneToMany
-//    private Article article;
+    @OneToOne(mappedBy = "product")
+    private Dimensions dimensions;
 
-    //@JsonView(View.Detailed.class)
+    @ManyToOne
+    private ProductGender productGender;
+
     private String description;
 
-    //@JsonView(View.Detailed.class)
-//    private Double price;
-
-//    @JsonManagedReference
-//    @Column(name="pictures")
-//    @OneToMany(
-//            mappedBy = "product",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true
-//    )
-//
-//    private List<Picture> pictures = new ArrayList<>();
-
-
-//    @JsonManagedReference
-//    @Column(name = "pictures")
-//    @OneToMany(
-//            mappedBy = "product",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true
-//    )
-//    private List<Inventory> inventory = new ArrayList<>();
     @Column
     private Date createdAt;
 
@@ -90,7 +68,11 @@ public class Product implements Comparable<Product>{
         this.createdAt = new Date();
     }
 
+<<<<<<< HEAD
         @JsonManagedReference
+=======
+    @JsonManagedReference
+>>>>>>> testings
     @Column
     @OneToMany(
             mappedBy = "product",
@@ -101,10 +83,14 @@ public class Product implements Comparable<Product>{
 
     @ManyToMany(mappedBy = "products")
     private List<Tag> tags = new ArrayList<>();
-
-
     public Product(String name){
         this.name = name;
+    }
+    public Product(String name,String description,String brand,User user) {
+        this.name = name;
+        this.description = description;
+        this.brand = brand;
+        this.user = user;
     }
 
     public List<Tag> addTag(Tag tag){

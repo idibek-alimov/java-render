@@ -1,6 +1,7 @@
 package maryam.service.product;
 
 import lombok.RequiredArgsConstructor;
+<<<<<<< HEAD
 import maryam.controller.product.CreateArticleHolder;
 import maryam.controller.product.PictureHolder;
 import maryam.data.product.ProductRepository;
@@ -9,26 +10,34 @@ import maryam.models.inventory.Inventory;
 import maryam.models.picture.Picture;
 import maryam.models.product.Color;
 import maryam.models.product.Product;
+=======
+import maryam.data.product.ProductRepository;
+import maryam.dto.inventory.InventoryDTO;
+import maryam.dto.product.ProductCreateDTO;
+import maryam.models.category.Category;
+import maryam.models.product.*;
+>>>>>>> testings
 import maryam.models.tag.Tag;
 import maryam.models.user.User;
 import maryam.models.uservisit.Visit;
 import maryam.service.article.ArticleService;
-import maryam.service.inventory.InventoryService;
-import maryam.service.picture.PictureService;
+import maryam.service.article.DiscountService;
+import maryam.service.category.CategoryService;
 import maryam.service.tag.TagService;
+import maryam.service.user.UserService;
 import maryam.service.visit.VisitService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.*;
-import com.google.common.collect.Iterables;
 
 @Service @RequiredArgsConstructor @Transactional
 public class ProductService implements ProductServiceInterface{
     private final ProductRepository productRepository;
+<<<<<<< HEAD
     private final UserRepository userRepository;
     private final PictureService pictureService;
     private final InventoryService inventoryService;
@@ -43,118 +52,83 @@ public class ProductService implements ProductServiceInterface{
         User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         if(user == null){
             throw new RuntimeException("the fucking user is not found");
-        }
-        product.setUser(user);
-        Product createdProduct = productRepository.save(product);
-        System.out.println("before add article");
-        createdProduct.addArticle(articleService.addArticle(inventories,pictures,color,createdProduct));
-        System.out.println("after add article");
-        //        List<Inventory> createdInventories = inventoryService.addInventories(inventories,createdProduct);
-//        List<Picture> createdPictures = pictureService.addPictures(pictures,createdProduct);
-//        createdProduct.setPictures(createdPictures);
-//        createdProduct.setInventory(createdInventories);
-        tagService.addTagToProduct(createdProduct,tags);
+=======
+    private final UserService userService;
+    private final CategoryService categoryService;
+    private final DimentsionsService dimentsionsService;
 
-        return createdProduct;
+    public Product getProductById(Long id){
+        Optional<Product> product = productRepository.findById(id);
+        if(product.isPresent()){
+            return product.get();
+        }
+        else {
+            return null;
+>>>>>>> testings
+        }
     }
-    public Product addProduct(Product product,
-                              List<Tag> tags,
-                              List<CreateArticleHolder> articleHolders,
-                                List<PictureHolder> pictureHolders)  {
-        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        if(user == null){
-            throw new RuntimeException("the fucking user is not found");
+    public Product getProductIfOwner(Long id){
+        Product product = getProductById(id);
+        if (product!=null && product.getUser().getId().equals(userService.getCurrentUser().getId())){
+            return product;
         }
-        product.setUser(user);
-        Product createdProduct = productRepository.save(product);
-        for(int i=0;i<articleHolders.size();i++){
-            createdProduct.addArticle(articleService.addArticle(
-                    articleHolders.get(i).getInventories(),
-                    pictureHolders.get(i).getPictures(),
-                    articleHolders.get(i).getColor(),
-                    createdProduct));
+        else {
+            return null;
         }
-//        for(CreateArticleHolder articleHolder:articleHolders){
-//            createdProduct.addArticle(articleService.addArticle(
-//                    articleHolder.getInventories(),
-//                    articleHolder.getPictures(),
-//                    articleHolder.getColor(),
-//                    createdProduct));
-//        }
-        tagService.addTagToProduct(createdProduct,tags);
-
-        return createdProduct;
     }
-    @Override
-    public Product addProduct(Product product,
-                              List<Inventory> inventories,
-                              Color color,
-                              List<MultipartFile> pictures)  {
-        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        if(user == null){
-            throw new RuntimeException("the fucking user is not found");
-        }
-        product.setUser(user);
-        Product createdProduct = productRepository.save(product);
-        createdProduct.addArticle(articleService.addArticle(inventories,pictures,color,createdProduct));
-//        List<Inventory> createdInventories = inventoryService.addInventories(inventories,createdProduct);
-//        List<Picture> createdPictures = pictureService.addPictures(pictures,createdProduct);
-//        createdProduct.setPictures(createdPictures);
-//        createdProduct.setInventory(createdInventories);
-        return createdProduct;
+    public Long createProduct(ProductCreateDTO productCreateDTO){
+        User user = userService.getCurrentUser();
+        Product product = new Product()
+                .builder()
+                .name(productCreateDTO.getName())
+                .description(productCreateDTO.getDescription())
+                .brand(productCreateDTO.getBrand())
+                .user(user)
+                .build();
+        product = categoryService.addCategoryToProduct(product,productCreateDTO.getCategory());
+        product = productRepository.save(product);
+        product.setDimensions(dimentsionsService.addDimensionsToProduct(new Dimensions()
+                .builder()
+                        .width(productCreateDTO.getDimensions().getWidth())
+                        .height(productCreateDTO.getDimensions().getHeight())
+                        .length(productCreateDTO.getDimensions().getLength())
+                .build(),product));
+        productRepository.save(product);
+        return product.getId();
     }
-    public Product addArticleToProduct(List<Inventory> inventories,
-                                       Color color,
-                                       List<MultipartFile> pictures,
-                                       Long id){
-        System.out.println("indise att article to product function");
-        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        if(user == null){
-            throw new RuntimeException("the fucking user is not found");
-        }
+    public Long updateProduct(Long id,ProductCreateDTO product) throws Error{
         Optional<Product> optionalProduct = productRepository.findById(id);
-        if(!optionalProduct.isPresent()){
-            throw new RuntimeException("the fucking product does not exist");
+        if(optionalProduct.isPresent()){
+            Product presentProduct = optionalProduct.get();
+            presentProduct.setName(product.getName());
+            presentProduct.setDescription(product.getDescription());
+            presentProduct.setBrand(product.getBrand());
+            presentProduct.setDimensions(dimentsionsService.updateDimensions(new Dimensions()
+                    .builder()
+                    .width(product.getDimensions().getWidth())
+                    .height(product.getDimensions().getHeight())
+                    .length(product.getDimensions().getLength())
+                    .build(),presentProduct));
+            return presentProduct.getId();
         }
-        if(optionalProduct.get().getUser()!=user){
-            throw new RuntimeException("motherfucker trying to add article to some other motherfuckers product");
+        else {
+            throw new Error("Product with id = "+id+"does not exist nigga;");
         }
-        System.out.println("passed all the ifs");
-        optionalProduct.get().addArticle(articleService.addArticle(inventories,pictures,color,optionalProduct.get()));
-        System.out.println("before returning the product");
-        return optionalProduct.get();
-    }
-//    public Product addProduct(Product product,List<Inventory> inventories){
-//        User user = userRepository.findByUsername((String)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-//        if(user == null){
-//            throw new RuntimeException("the fucking user is not found");
-//        }
-//        product.setUser(user);
-//        Product createdProduct = productRepository.save(product);
-//        List<Inventory> createdInventories = inventoryService.addInventories(inventories,createdProduct);
-//        //List<Picture> createdPictures = pictureService.addPictures(pictures,createdProduct);
-//        //createdProduct.setPictures(createdPictures);
-//        createdProduct.setInventory(createdInventories);
-//        return createdProduct;
-//    }
 
-    @Override
-    public Optional<Product> getProduct(Long id) {
-        return productRepository.findById(id);
     }
-    public List<Product> findByName(String name,Integer page,Integer amount){
-        return productRepository.findByNameSimilar(name,PageRequest.of(page,amount));
+    public Product getProduct(Long id) throws Exception{
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if(optionalProduct.isPresent()){
+            return optionalProduct.get();
+        }
+        else {
+            throw new Exception("Product with the given id does not exist");
+        }
     }
-
-    @Override
-    public Page<Product> listOfProducts(Integer page,Integer amount) {
-        return productRepository.findAll(PageRequest.of(page,amount));
-    }
-
-    @Override
     public void removeProduct(Long id) {
         productRepository.deleteById(id);
     }
+<<<<<<< HEAD
 
     @Override
     public Product editProduct(Product product) {
@@ -198,4 +172,6 @@ public class ProductService implements ProductServiceInterface{
     public List<Product> getByPage(String name,Integer page, Integer amount){
         return productRepository.findProductByname(name,PageRequest.of(page,amount));
     }
+=======
+>>>>>>> testings
 }

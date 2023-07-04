@@ -22,10 +22,15 @@ public class UserSerializer extends StdSerializer<User> {
     public void serialize(User user, JsonGenerator jgen, SerializerProvider provider)
             throws IOException, JsonProcessingException {
         jgen.writeStartObject();
-        jgen.writeNumberField("id",user.getId());
+        //jgen.writeNumberField("id",user.getId());
         jgen.writeStringField("username",user.getUsername());
-        jgen.writeStringField("password",user.getPassword());
+        //jgen.writeStringField("password",user.getPassword());
         jgen.writeStringField("name",user.getName());
+        jgen.writeStringField("phoneNumber",user.getPhoneNumber());
+        jgen.writeStringField("email",user.getEmail());
+        jgen.writeNumberField("age",user.getAge());
+        jgen.writeStringField("gender",user.getGender().toString());
+        //jgen.writeStringField("profilePic",user.getProfilePic());
         jgen.writeEndObject();
     }
 

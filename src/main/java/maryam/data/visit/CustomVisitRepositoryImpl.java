@@ -4,8 +4,8 @@ import maryam.models.user.User;
 import maryam.models.uservisit.Visit;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import java.util.List;
 
 @Repository @Transactional

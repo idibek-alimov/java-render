@@ -1,17 +1,17 @@
 package maryam.models.role;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Role {
 
     @Id
@@ -20,4 +20,16 @@ public class Role {
     private Long id;
     private String name;
 
+<<<<<<< HEAD
+=======
+
+    public Role(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+>>>>>>> testings
 }

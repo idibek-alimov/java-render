@@ -7,11 +7,11 @@ import maryam.models.product.Article;
 import maryam.models.product.Product;
 import maryam.models.user.User;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="liked_products")
+@Table(name="liked_articles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
