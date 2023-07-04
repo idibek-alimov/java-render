@@ -10,6 +10,7 @@ import maryam.models.product.Article;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.core.io.Resource;
 
 @Data
 @NoArgsConstructor

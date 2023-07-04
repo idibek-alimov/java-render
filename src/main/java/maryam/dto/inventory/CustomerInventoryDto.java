@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class CustomerInventoryDto {
     private Long id;
     private Double price;
+    private Double originalPrice;
     private Integer quantity;
     private Boolean inStock;
     private String size;

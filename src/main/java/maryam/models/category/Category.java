@@ -23,11 +23,13 @@ public class Category {
     private String name;
     private String nameTJ;
     private String nameRU;
+    private Boolean size = false;
+    private Boolean color = false;
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
-    @OneToOne(mappedBy = "category")
-    private CategoryProperties categoryProperties;
+//    @OneToOne(mappedBy = "category")
+//    private CategoryProperties categoryProperties;
 
     public Category(String name){
         this.name = name;
@@ -40,7 +42,7 @@ public class Category {
         return id;
     }
 
-    public void setCategoryProperties(CategoryProperties categoryProperties) {
-        this.categoryProperties = categoryProperties;
-    }
+//    public void setCategoryProperties(CategoryProperties categoryProperties) {
+//        this.categoryProperties = categoryProperties;
+//    }
 }

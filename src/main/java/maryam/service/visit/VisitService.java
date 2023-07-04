@@ -1,18 +1,16 @@
 package maryam.service.visit;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import maryam.data.product.ArticleRepository;
 import maryam.data.product.ProductRepository;
-import maryam.data.user.UserRepository;
 import maryam.data.visit.UserVisitRepository;
 import maryam.data.visit.VisitRepository;
 import maryam.models.product.Article;
-import maryam.models.product.Product;
 import maryam.models.user.User;
 import maryam.models.uservisit.UserVisits;
 import maryam.models.uservisit.Visit;
 import maryam.service.user.UserService;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -20,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@Service @RequiredArgsConstructor @Transactional
+@Service @RequiredArgsConstructor @Slf4j
 public class VisitService {
 //    private final UserRepository userRepository;
     private final UserService userService;
@@ -29,30 +27,62 @@ public class VisitService {
     private final UserVisitService userVisitService;
     private final ProductRepository productRepository;
     private final ArticleRepository articleRepository;
-    public void addVisit(Long id){
+    public Visit getVisit(Article article) {
         User user = userService.getCurrentUser();
-        Optional<UserVisits> userVisitsOptional = userVisitRepository.findByUser(user);
-        UserVisits userVisits;
-        if(!userVisitsOptional.isPresent() && user!= null){
-           userVisits = userVisitService.createUserVisits(user);
+        if (user != null) {
+           return visitRepository.findByArticleAndUser(article,user).orElse(null);
         }
-        else{
-            userVisits  = userVisitsOptional.get();
+        return null;
+    }
+    public Visit createVisit(Article article,User user){
+            return visitRepository.save(new Visit(user, article));
+    }
+    public void addVisit(Article article){
+        try {
+            User user = userService.getCurrentUser();
+            if (user != null) {
+                Optional<Visit> optionalVisit = visitRepository.findBYArticleAndUser(article.getId(), user.getId());
+                Visit visit;
+                if (optionalVisit.isPresent()) {
+                    visit = optionalVisit.get();
+                    visit.setCreatedAt(new Date());
+                } else {
+                    visitRepository.save(new Visit(user, article));
+                    //TO DO add count to user visits
+                }
+            }
         }
-        Article article = articleRepository.findById(id).get();
-        Optional<Visit> visitOptional = visitRepository.findByArticleAndUser(article,user);
-        if(visitOptional.isPresent()){
-               visitOptional.get().setCreatedAt(new Date());
-        }
-        else {
-            visitRepository.save(new Visit(user,article));
-            userVisits.setVisitcount(userVisits.getVisitcount()+1);
-        }
-        if(userVisits.getVisitcount()>200){
-            visitRepository.delete(visitRepository.findAllByUserOrderByCreatedAt(user).get(0));
-            userVisits.setVisitcount(userVisits.getVisitcount()-1);
+        catch (Exception e){
+            log.info(e.toString());
         }
     }
+//    public void addVisit(Article article) {
+////        try {
+////            User user = userService.getCurrentUser();
+////            System.out.println("inside try");
+////            if (user!=null) {
+////                System.out.println("user is found");
+////                UserVisits userVisits = userVisitService.getCurrentUserVisit(user);
+////                Visit visit = getVisit(article);
+////                System.out.println("the visit is");
+////                System.out.println(visit);
+////                if (visit != null) {
+////                    visit.setCreatedAt(new Date());
+////                } else {
+////                    visit = createVisit(article);
+////                    userVisits.setVisitcount(userVisits.getVisitcount() + 1);
+////                }
+////                if (userVisits.getVisitcount() > 200) {
+////                    visitRepository.delete(visitRepository.findAllByUserOrderByCreatedAt(user).get(0));
+////                    userVisits.setVisitcount(userVisits.getVisitcount() - 1);
+////                }
+//            }
+//        }
+//        catch (Exception e){
+//            System.out.println("inside the catch");
+//            System.out.println(e);
+//        }
+
     public List<Visit> getAllVisits(){
         User user = userService.getCurrentUser();
         if (user != null) {

@@ -55,6 +55,7 @@ public class User implements UserDetails {
 
     private String phoneNumber;
     private Integer age;
+    private String address;
 
 
 

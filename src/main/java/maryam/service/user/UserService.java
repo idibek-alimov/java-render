@@ -102,30 +102,29 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         }
     }
     public User changeName(String name){
-        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        User user = userRepository.findByUsername(username);
+        User user = getCurrentUser();
         user.setName(name);
+        userRepository.save(user);
+        return user;
+    }
+    public User changeAddress(String address){
+        User user = getCurrentUser();
+        user.setAddress(address);
         userRepository.save(user);
         return user;
     }
 
     public User changeEmail(String email){
-//        System.out.println(1);
-        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-//        System.out.println(2);
-        User user = userRepository.findByUsername(username);
-//        System.out.println(3);
+        System.out.println(email);
+        User user = getCurrentUser();
         user.setEmail(email);
-        user.setActive(false);
-        sendVerificationEmail(email);
-//        System.out.println(4);
+//        sendVerificationEmail(email);
+////        System.out.println(4);
         userRepository.save(user);
-//        System.out.println(5);
         return user;
     }
     public User changeGender(@NotNull String gender){
-        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        User user = userRepository.findByUsername(username);
+        User user = getCurrentUser();
         if(gender.toLowerCase().equals("male")){
             user.setGender(User.Gender.Male);
         } else if (gender.toLowerCase().equals("female")) {
@@ -135,8 +134,7 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         return user;
     }
     public User changePhoneNumber(String phoneNumber){
-        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        User user = userRepository.findByUsername(username);
+        User user = getCurrentUser();
         user.setPhoneNumber(phoneNumber);
         userRepository.save(user);
         return user;
@@ -206,7 +204,8 @@ public class UserService implements UserServiceInterface, UserDetailsService {
     }
     public User upgradeToManager(){
         User user = getCurrentUser();
-        roleService.setManagerRole(user);
+        user = roleService.setManagerRole(user);
+        userRepository.save(user);
         return user;
     }
     public AuthenticationResponse register(RegisterRequest request){
@@ -219,6 +218,12 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         userRepository.save(user);
         user = roleService.setUserRole(user);
         userRepository.save(user);
+        var accessToken = jwtService.generateToken(user,1);
+        var refreshToken = jwtService.generateToken(user,2);
+        return AuthenticationResponse.builder().access_token(accessToken).refresh_token(refreshToken).build();
+    }
+    public AuthenticationResponse refreshToken(){
+        User user = getCurrentUser();
         var accessToken = jwtService.generateToken(user,1);
         var refreshToken = jwtService.generateToken(user,2);
         return AuthenticationResponse.builder().access_token(accessToken).refresh_token(refreshToken).build();

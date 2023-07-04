@@ -1,14 +1,10 @@
 package maryam.service.order;
 
 import lombok.RequiredArgsConstructor;
-import maryam.controller.order.ItemHolder;
 import maryam.data.order.ItemRepository;
 import maryam.data.order.OrderRepository;
 import maryam.data.user.UserRepository;
-import maryam.dto.order.DayOfTheWeek;
-import maryam.dto.order.DayOrderStatisticDTO;
-import maryam.dto.order.WeekOrderClass;
-import maryam.dto.order.WeekOrderStatisticDTO;
+import maryam.dto.order.*;
 import maryam.models.order.Item;
 import maryam.models.order.Order;
 import maryam.models.user.User;
@@ -30,12 +26,16 @@ public class OrderService {
     private final ItemService itemService;
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
-    public Order addOrder(List<ItemHolder> items) throws Exception{
+    public Order addOrder(OrderCreateDto orderCreateDto) throws Exception{
         try {
             User user = userService.getCurrentUser();
             System.out.println(user);
-                Order order = orderRepository.save(new Order(user));
-                order.setItems(itemService.addItems(items, order));
+                Order order = orderRepository.save(new Order()
+                        .builder()
+                                .user(user)
+                                .address(orderCreateDto.getAddress())
+                        .build());
+                order.setItems(itemService.addItems(orderCreateDto.getItems(), order));
                 return order;
         }
         catch (Exception e){

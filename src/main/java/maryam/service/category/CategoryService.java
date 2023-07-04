@@ -1,12 +1,13 @@
 package maryam.service.category;
 
 import lombok.RequiredArgsConstructor;
-import maryam.data.category.CategoryPropertiesRepository;
+//import maryam.data.category.CategoryPropertiesRepository;
 import maryam.data.category.CategoryRepository;
+import maryam.dto.category.SellerCategoryDTO;
 import maryam.models.category.Category;
-import maryam.models.category.CategoryProperties;
+//import maryam.models.category.CategoryProperties;
 import maryam.models.product.Product;
-import maryam.types.CategoryWithProperties;
+//import maryam.types.CategoryWithProperties;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -18,7 +19,7 @@ import java.util.Optional;
 @Transactional
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    private final CategoryPropertiesRepository categoryPropertiesRepository;
+//    private final CategoryPropertiesRepository categoryPropertiesRepository;
 
     public Category getCategoryById(Long id){
         Optional<Category> optionalCategory = categoryRepository.findById(id);
@@ -63,20 +64,22 @@ public class CategoryService {
             return createdCategory;
         }
     }
-    public Category save(CategoryWithProperties categoryWithProperties){
+    public Category save(SellerCategoryDTO categoryWithProperties){
         Category category = new Category()
                 .builder()
                 .name(categoryWithProperties.getName())
                 .nameTJ(categoryWithProperties.getNameTJ())
                 .nameRU(categoryWithProperties.getNameRU())
+                .color(categoryWithProperties.getColor())
+                .size(categoryWithProperties.getSize())
                 .build();
-        category = categoryRepository.save(category);
-        if(categoryWithProperties.getColor()!=null || categoryWithProperties.getSize()!=null){
-            CategoryProperties categoryProperties =categoryPropertiesRepository.save(new CategoryProperties(category,categoryWithProperties.getSize(),categoryWithProperties.getColor(),categoryWithProperties.getGender()));
-            category.setCategoryProperties(categoryProperties);
+        if (categoryWithProperties.getCategory() != null){
+            Optional<Category> parentCategory =  categoryRepository.findById(categoryWithProperties.getCategory());
+            if (parentCategory.isPresent()){
+                category.setCategory(parentCategory.get());
+            }
         }
-
-        return category;
+        return categoryRepository.save(category);
     }
     public List<Category> findBySimilarName(String name){
         return categoryRepository.findBySimilarName(name);

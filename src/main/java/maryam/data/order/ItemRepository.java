@@ -18,6 +18,8 @@ public interface ItemRepository extends CrudRepository<Item,Long> {
     @Query(value = "SELECT * FROM item WHERE status=?2 AND owner_id=?1",nativeQuery = true)
     List<Item> findByUserAndStatus(Long id,Integer status);
 
+    @Query(value = "SELECT * FROM item WHERE status!=3",nativeQuery = true)
+    List<Item> getDeliveries();
     @Query(value = "SELECT * FROM item WHERE status=?2 AND owner_id=?1 AND created_at > now() - interval '?3 day'",nativeQuery = true)
     List<Item> findByOwnerAndStatusAndDay(Long id,Integer status,Integer timeIndex);
     @Query(value = "SELECT * FROM item WHERE status=?2 AND owner_id=?1 AND created_at > now() - interval '?3 week'",nativeQuery = true)

@@ -4,13 +4,10 @@ import lombok.RequiredArgsConstructor;
 import maryam.data.like.LikeRepository;
 import maryam.data.product.ArticleRepository;
 import maryam.data.product.ProductRepository;
-import maryam.data.user.UserRepository;
 import maryam.models.like.Like;
 import maryam.models.product.Article;
-import maryam.models.product.Product;
 import maryam.models.user.User;
 import maryam.service.user.UserService;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -38,7 +35,7 @@ public class LikeService {
         }
     }
 
-    public Like like_article(Long id){
+    public Like likeArticle(Long id){
         //Optional<Product> optionalProduct = productRepository.findById(id);
         Optional<Article> optionalArticle = articleRepository.findById(id);
         try{

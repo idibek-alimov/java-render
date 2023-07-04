@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import maryam.models.product.Product;
@@ -22,6 +23,7 @@ import java.util.List;
 @Entity
 @Table(name = "user_order")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
@@ -38,6 +40,8 @@ public class Order {
     @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    private String address;
 
     @JsonManagedReference
     @Column(name="items")

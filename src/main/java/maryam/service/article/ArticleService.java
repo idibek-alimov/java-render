@@ -18,6 +18,7 @@ import maryam.service.color.ColorService;
 import maryam.service.inventory.InventoryService;
 import maryam.service.like.LikeService;
 import maryam.service.picture.PictureService;
+import maryam.service.product.ProductService;
 import maryam.service.user.UserService;
 import maryam.service.visit.VisitService;
 import org.modelmapper.ModelMapper;
@@ -44,7 +45,7 @@ public class ArticleService {
     private final UserService userService;
     private final VisitService visitService;
     private final DiscountService discountService;
-    private final LikeService likeService;
+    private final ProductService productService;
 
     public  Page<Article> getArticlesByPage(Integer page,Integer amount){
         return articleRepository.findAll(PageRequest.of(page,amount, Sort.by("createdAt").descending()));
@@ -60,9 +61,8 @@ public class ArticleService {
         }
     }
     public Product addArticleWithoutPicture(Long id,Article article){
-        Optional<Product> optionalProduct =  productRepository.findById(id);
-        if(optionalProduct.isPresent() && optionalProduct.get().getUser().getId() == userService.getCurrentUser().getId()){
-            Product product = optionalProduct.get();
+        Product product = productService.getProductIfOwner(id);
+        if(product!=null){
             product.addArticle(createArticleWithoutPicture(article,product));
             return product;
         }else {
@@ -70,17 +70,19 @@ public class ArticleService {
         }
     }
     public Article createArticleWithoutPicture(Article article, Product product){
-        Article createdArticle = articleRepository.save((new Article(product,article.getSellerArticle())));
-        createdArticle.setInventory(inventoryService.createInventories(article.getInventory(),createdArticle));
+        Article newArticle = articleRepository.save(new Article()
+                .builder()
+                        .product(product)
+                        .sellerArticle(article.getSellerArticle())
+                .build());
+        newArticle.setInventory(inventoryService.createInventories(article.getInventory(),newArticle));
         if(article.getDiscounts()!=null && article.getDiscounts().size()!=0 && article.getDiscounts().get(0).getPercentage()!=0){
-           discountService.addDiscount(createdArticle,article.getDiscounts().get(0).getPercentage());
+           discountService.addDiscount(newArticle,article.getDiscounts().get(0).getPercentage());
         }
-        createdArticle = articleRepository.save(createdArticle);
-        if(article.getColor()!=null){
-            colorService.addColor(article.getColor(),createdArticle);
-        }
-        createdArticle.setStatus(Article.Status.NoPicture);
-        return createdArticle;
+        colorService.addColor(article.getColor(),newArticle);
+        newArticle = articleRepository.save(newArticle);
+        newArticle.setStatus(Article.Status.NoPicture);
+        return newArticle;
     }
     public Article createArticleWithPicture(Article article, List<MultipartFile> pictures, Product product){
         Article createdArticle = createArticleWithoutPicture(article,product);
@@ -98,7 +100,7 @@ public class ArticleService {
             if(article.getDiscounts()!=null && article.getDiscounts().get(0).getPercentage()!=0){
                 discountService.addDiscount(presentArticle,article.getDiscounts().get(article.getDiscounts().size()-1).getPercentage());
             }
-            if (presentArticle.getColor().getName()!=article.getColor().getName())
+            if (presentArticle.getColor()!= null && presentArticle.getColor().getName()!=article.getColor().getName())
                 colorService.addColor(article.getColor(),presentArticle);
             pictureService.removePicturesFromArticle(picIdList,presentArticle);
             inventoryService.updateInventories(article.getInventory(),presentArticle);
@@ -116,17 +118,23 @@ public class ArticleService {
     }
 
     public Optional<Article> getArticle(Long id){
-        String user = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        if(user!="anonymousUser"){
-            visitService.addVisit(id);
-        }
-        return articleRepository.findById(id);
+        Article article = articleRepository.findById(id).get();
+        visitService.addVisit(article);
+        return Optional.of(article);
     }
-    public Article getArticleDto(Long id){
-        return getArticle(id).get();
+    public Article getArticleById(Long id){
+        return articleRepository.findById(id).get();
     }
+//    public Article getArticleDto(Long id){
+//        return getArticle(id).get();
+//    }
     public List<Article> getArticlesInProduct(Long id){
         return articleRepository.findByProductId(id);
+    }
+    public List<Article> getArticlesInProductByCategory(Long id)throws Exception{
+        List<Article> articlesByProductCategory = articleRepository.findArticlesByProductCategory(productService.getProduct(id).getCategory().getId());
+        articlesByProductCategory = articlesByProductCategory.stream().filter(article -> article.getProduct().getId() !=id).collect(Collectors.toList());
+        return articlesByProductCategory;
     }
 
     public List<Article> searchByName(String searchText,Integer page,Integer amount){
@@ -168,14 +176,11 @@ public class ArticleService {
     }
     public List<Article> getLikedArticle() throws Exception{
         try {
-//            System.out.println("inside the service");
-            User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
-//            System.out.println("the fucking user is");
-//            System.out.println(user);
+            User user = userService.getCurrentUser();
             return articleRepository.getLikedArticles(user.getId());
         }
         catch (Exception e){
-            throw new RuntimeException("Not authenticated exception ,bitch");
+            throw new RuntimeException(e);
         }
     }
 }

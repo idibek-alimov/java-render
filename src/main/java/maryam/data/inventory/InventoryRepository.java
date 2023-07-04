@@ -26,4 +26,7 @@ public interface InventoryRepository extends CrudRepository<Inventory,Long> {
             "INNER JOIN product ON product.id = article.product_id " +
             "WHERE item.owner_id=?1",nativeQuery = true)
     List<SellerItemDTO> getSellerItemAll(Long id);
+
+    @Query(value = "SELECT * FROM inventory WHERE article_id=?1",nativeQuery = true)
+    List<Inventory> getInventoryByArticle(Long id);
 }

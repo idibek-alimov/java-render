@@ -27,11 +27,27 @@ import java.util.*;
 public class ProductService implements ProductServiceInterface{
     private final ProductRepository productRepository;
     private final UserService userService;
-    private final TagService tagService;
     private final CategoryService categoryService;
     private final DimentsionsService dimentsionsService;
-    private final ProductGenderService productGenderService;
 
+    public Product getProductById(Long id){
+        Optional<Product> product = productRepository.findById(id);
+        if(product.isPresent()){
+            return product.get();
+        }
+        else {
+            return null;
+        }
+    }
+    public Product getProductIfOwner(Long id){
+        Product product = getProductById(id);
+        if (product!=null && product.getUser().getId().equals(userService.getCurrentUser().getId())){
+            return product;
+        }
+        else {
+            return null;
+        }
+    }
     public Long createProduct(ProductCreateDTO productCreateDTO){
         User user = userService.getCurrentUser();
         Product product = new Product()

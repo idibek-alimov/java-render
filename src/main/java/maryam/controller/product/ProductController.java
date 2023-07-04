@@ -30,6 +30,7 @@ public class ProductController {
     public Long createProduct(
             @RequestPart("product") ProductCreateDTO product
             ){
+        System.out.println("product create");
         return  productService.createProduct(product);
     }
     @PostMapping(path="/seller/update/{id}",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})

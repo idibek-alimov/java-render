@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 public class FileStorageService implements FileStorageServiceInterface {
 
     private final Path root = Paths.get("uploads");
-    private final Path user_pic_path = Paths.get("user_pics");
+//    private final Path user_pic_path = Paths.get("user_pics");
 
     @Override
     public void init() {
@@ -34,14 +34,13 @@ public class FileStorageService implements FileStorageServiceInterface {
 
     @Override
     public String save(MultipartFile file) {
+        //this.init();
         Random random = new Random();
 
         String extension = file.getOriginalFilename().split("\\.")[1];
         String new_name = String.format("%s%s",System.currentTimeMillis(),random.nextInt(100000)+"."+extension);
         try{
-//            System.out.println("before saving image");
-//            System.out.println(file.getInputStream());
-//            ////////
+            ////////
 //            System.out.println("BEfore the new stuff line 1");
 //            BufferedImage bi =(BufferedImage) file.getResource();  // retrieve image
 //            System.out.println("BTNS line 2");
@@ -49,17 +48,15 @@ public class FileStorageService implements FileStorageServiceInterface {
 //            System.out.println("BTNS line 3");
 //            ImageIO.write(bi, "jpg", outputfile);
 //            System.out.println("AFTer the new stuff");
-//            ///////
-//
-//            System.out.println(this.root.resolve(new_name));
-//            Files.copy(file.getInputStream(),this.root.resolve(new_name));
-//            System.out.println("after saving image");
-            new_name = file.getOriginalFilename();
+            ///////
+            Files.copy(file.getInputStream(),this.root.resolve(new_name));
+            //            System.out.println("after saving image");
+//            new_name = file.getOriginalFilename();
             return new_name;
         }catch (Exception e){
-            System.out.println("something vent wrong");
             System.out.println(e);
-            throw new RuntimeException("Cloud not store the file.Error:"+ e.getMessage());
+            this.init();
+            throw new RuntimeException("Cloud not store the file.Errorrr:"+ e.getMessage());
         }
 
     }
@@ -69,6 +66,7 @@ public class FileStorageService implements FileStorageServiceInterface {
         try{
             Path file = root.resolve(filename);
             Resource resource = new UrlResource(file.toUri());
+
             if(resource.exists() || resource.isReadable()){
                 return resource;
             }  else {

@@ -15,16 +15,11 @@ import java.util.List;
 public class DiscountService {
     private final DiscountRepository discountRepository;
     public Discount addDiscount(Article article,Integer percentage){
-        System.out.println(2);
         Discount discount = new Discount(article,percentage);
         discount = discountRepository.save(discount);
-        System.out.println(3);
         List<Discount> discounts = article.getDiscounts();
-        System.out.println(4);
         discounts.add(discount);
-        System.out.println(5);
         article.setDiscounts(discounts);
-        System.out.println(6);
         return discountRepository.save(discount);
     }
 }

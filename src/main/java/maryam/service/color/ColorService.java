@@ -15,19 +15,12 @@ public class ColorService {
 
     private final ColorRepository colorRepository;
     public Color addColor(Color color, Article article){
-        try {
-        Optional<Color> optionalColor;
-        optionalColor = colorRepository.findById(color.getId());
-        if (optionalColor.isPresent()){
-            article.setColor(optionalColor.get());
-            return optionalColor.get();
-        }
-        else{
-            return null;
-        }
-        }
-        catch (Exception e){
-            System.out.println(e);
+        if(color!=null && color.getId() !=null){
+            Optional<Color> optionalColor = colorRepository.findById(color.getId());
+            if(optionalColor.isPresent()){
+                article.setColor(optionalColor.get());
+                return optionalColor.get();
+            }
         }
         return null;
     }

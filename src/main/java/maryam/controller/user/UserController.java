@@ -45,7 +45,7 @@ public class UserController {
     private final UserService userService;
     private final UserVisitService userVisitService;
 
-    @GetMapping(path="/current")
+    @GetMapping(path="/user/current")
     public User getUser(){
         return userService.getCurrentUser();
     }
@@ -55,34 +55,38 @@ public class UserController {
         user = userService.saveUser(user);
         return ResponseEntity.created(uri).body(user);
     }
-    @PostMapping(path="/name/change")
+    @PostMapping(path="/user/name/change")
     public User nameChange(@RequestBody TextString name){
         return userService.changeName(name.getText()
         );
     }
-    @PostMapping(path="/email/change")
+    @PostMapping(path="/user/address/change")
+    public User addressChange(@RequestBody TextString address){
+        return userService.changeAddress(address.getText());
+    }
+    @PostMapping(path="/user/email/change")
     public User emailChange(@RequestBody TextString email){
         return userService.changeEmail(email.getText());
     }
-    @PostMapping(path="/email/verify")
+    @PostMapping(path="/user/email/verify")
     public User emailVerify(@RequestBody EmailVerifyType emailVerify) throws  Exception{
        return userService.completeVerification(emailVerify.getEmail(),emailVerify.getCode());
     }
 
-    @PostMapping(path="/gender/change")
+    @PostMapping(path="/user/gender/change")
     public User genderChange(@RequestBody TextString gender){
         System.out.println(gender.getText());
         return userService.changeGender(gender.getText());
     }
-    @PostMapping(path = "/phone/change")
+    @PostMapping(path = "/user/phone/change")
     public User phoneNumberChange(@RequestBody TextString phoneNumber){
         return userService.changePhoneNumber(phoneNumber.getText());
     }
-    @PostMapping(path = "/picture/change")
+    @PostMapping(path = "/user/picture/change")
     public User profilePicChange(@RequestBody MultipartFile profilePic){
         return userService.changeProfilePic(profilePic);
     }
-    @PostMapping(path = "/age/change")
+    @PostMapping(path = "/user/age/change")
     public User ageChange(@RequestBody TextString age){
         return userService.changeAge(age.getText());
     }
@@ -117,6 +121,12 @@ public class UserController {
             @RequestBody AuthenticationRequest request
     ){
         return ResponseEntity.ok(userService.authenticate(request));
+    }
+    @CrossOrigin("*")
+    @GetMapping("/user/token/refresh")
+    public ResponseEntity<AuthenticationResponse> refreshToken(){
+        System.out.println("refreshing token");
+        return ResponseEntity.ok(userService.refreshToken());
     }
     @CrossOrigin("*")
     @PostMapping("/authenticate/seller")

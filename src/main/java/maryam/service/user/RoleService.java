@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,27 +46,31 @@ public class RoleService {
         }
     }
     public User setRole(User user,String roleName){
-        Set<Role> roles = user.getRoles().stream().collect(Collectors.toSet());
+        Collection<Role> roleCollection = user.getRoles();
+        Set<Role> roles = new HashSet<>();
+        if (roleCollection!=null){
+            roles = roleCollection.stream().collect(Collectors.toSet());
+        }
         Role role = getOrCreateRole(roleName);
         boolean contains = false;
-        for (Role role1:roles){
-            if(role.getName().equals(role1.getName())){
+        for (Role role1 : roles) {
+            if (role.getName().equals(role1.getName())) {
                 contains = true;
             }
         }
-        if (!contains){
+        if (!contains) {
             roles.add(role);
         }
         user.setRoles(roles);
         return user;
     }
     public User setUserRole(User user){
-        return setRole(user,"USER_ROLE");
+        return setRole(user,"ROLE_USER");
     }
     public User setSellerRole(User user){
-        return setRole(user,"SELLER_ROLE");
+        return setRole(user,"ROLE_SELLER");
     }
     public User setManagerRole(User user){
-        return setRole(user,"MANAGER_ROLE");
+        return setRole(user,"ROLE_MANAGER");
     }
 }

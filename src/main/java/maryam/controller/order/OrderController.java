@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 //import maryam.models.inventory.Inventory;
 //import maryam.models.order.Item;
 import maryam.dto.order.DayOrderStatisticDTO;
+import maryam.dto.order.OrderCreateDto;
 import maryam.dto.order.WeekOrderClass;
 import maryam.dto.order.WeekOrderStatisticDTO;
 import maryam.models.order.Item;
@@ -22,10 +23,14 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping(path ="/add")
-    public Long addNewOrder(@RequestBody List<ItemHolder> items) throws Exception{
-        System.out.println(items);
-        Order order = orderService.addOrder(items);
-        return order.getId();
+    public Long addNewOrder(@RequestBody OrderCreateDto orderCreateDto) throws Exception{
+        Order order = orderService.addOrder(orderCreateDto);
+        try {
+            return order.getId();
+        }
+        catch (Exception e){
+            throw new Exception(e);
+        }
     }
     @GetMapping(path="/queue")
     public List<Order> byUserInQueue(){

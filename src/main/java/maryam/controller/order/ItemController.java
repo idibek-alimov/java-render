@@ -1,8 +1,11 @@
 package maryam.controller.order;
 
 import lombok.RequiredArgsConstructor;
+import maryam.controller.product.ArticleController;
+import maryam.dto.article.CustomerArticleDto;
 import maryam.dto.order.SellerItemDTO;
 import maryam.models.order.Item;
+import maryam.service.article.ArticleService;
 import maryam.service.order.ItemService;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +17,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
+    private final ArticleService articleService;
+    private final ArticleController articleController;
     @GetMapping(path = "/user/{status}")
-    public List<Item> getByUserStatus(@PathVariable("status")Integer status){
-        return itemService.byUserStatus(status);
+    public List<CustomerArticleDto> getByUserStatus(@PathVariable("status")Integer status){
+        return itemService.byUserStatus(status).stream().map(item -> articleController.articleToDTO(articleService.getArticleById(item.getInventory().getArticle().getId()))).collect(Collectors.toList());
+    }
+    @GetMapping(path = "/user/delivery")
+    public List<CustomerArticleDto> getDeliveries(){
+        return itemService.getDeliveries().stream().map(item -> articleController.articleToDTO(articleService.getArticleById(item.getInventory().getArticle().getId()))).collect(Collectors.toList());
     }
     @GetMapping(path = "/seller/{status}")
     public List<SellerItemDTO> getByOwnerStatus(@PathVariable("status")String status){

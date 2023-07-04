@@ -15,6 +15,8 @@ import java.util.Queue;
 public interface VisitRepository extends CrudRepository<Visit,Long>{//,CustomVisitRepository {
 
     public List<Visit> findAllByUserOrderByCreatedAt(User user);
+    @Query(value = "SELECT * FROM visit WHERE article_id=?1 AND user_id=?2",nativeQuery = true)
+    public Optional<Visit> findBYArticleAndUser(Long article,Long user);
     public Optional<Visit> findByArticleAndUser(Article article, User user);
 
     @Modifying
