@@ -1,11 +1,14 @@
 package maryam.service.picture;
 
+import com.amazonaws.services.s3.AmazonS3;
 import lombok.RequiredArgsConstructor;
 import maryam.data.picture.PictureRepository;
 import maryam.models.picture.Picture;
 import maryam.models.product.Article;
 import maryam.models.product.Product;
 import maryam.storage.FileStorageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.transaction.Transactional;
@@ -16,6 +19,7 @@ import java.util.List;
 public class PictureService implements PictureServiceInterface{
     private final FileStorageService storageService;
     private final PictureRepository pictureRepository;
+
 
     @Override
     public Picture addPicture(Picture picture) {

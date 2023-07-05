@@ -148,11 +148,12 @@ public class ArticleController {
                 .description(article.getProduct().getDescription())
                 .category(article.getProduct().getCategory().getName())
                 .pictures(article.getPictures().stream().map(picture -> {
-                    try {
-                        return fileStorageService.load(picture.getName()).getFile().getAbsolutePath();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    return "https://s3.timeweb.com/448bb2be-maryambucket/"+picture.getName();
+//                    try {
+//                        return fileStorageService.load(picture.getName()).getFile().getAbsolutePath();
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
                 }).collect(Collectors.toList()))
 //                .inventories(article.getInventory().stream().map(inventory -> new CustomerInventoryDto().builder()
 //                        .id(inventory.getId())
