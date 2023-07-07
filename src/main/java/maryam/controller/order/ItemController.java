@@ -68,7 +68,7 @@ public class ItemController {
                 .id(item.getId())
                 .price(item.getPrice())
                 .name(item.getInventory().getArticle().getProduct().getName())
-                .brand(item.getInventory().getArticle().getProduct().getBrand())
+                .brand(item.getInventory().getArticle().getProduct().getBrand().getName())
                 .sellerArticle(item.getInventory().getArticle().getSellerArticle())
                 .createdAt(item.getCreated_at().toString())
                 .pictures(item.getInventory().getArticle().getPictures().stream().map(picture -> picture.getName()).collect(Collectors.toList()))

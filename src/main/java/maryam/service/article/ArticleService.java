@@ -8,16 +8,14 @@ import maryam.data.user.UserRepository;
 import maryam.dto.article.CustomerArticleDto;
 import maryam.dto.inventory.InventoryDTO;
 import maryam.models.picture.Picture;
-import maryam.models.product.Article;
-import maryam.models.product.Color;
-import maryam.models.product.Discount;
-import maryam.models.product.Product;
+import maryam.models.product.*;
 import maryam.models.tag.Tag;
 import maryam.models.user.User;
 import maryam.service.color.ColorService;
 import maryam.service.inventory.InventoryService;
 import maryam.service.like.LikeService;
 import maryam.service.picture.PictureService;
+import maryam.service.product.BrandService;
 import maryam.service.product.ProductService;
 import maryam.service.user.UserService;
 import maryam.service.visit.VisitService;
@@ -46,6 +44,7 @@ public class ArticleService {
     private final VisitService visitService;
     private final DiscountService discountService;
     private final ProductService productService;
+    private final BrandService brandService;
 
     public  Page<Article> getArticlesByPage(Integer page,Integer amount){
         return articleRepository.findAll(PageRequest.of(page,amount, Sort.by("createdAt").descending()));
@@ -135,6 +134,10 @@ public class ArticleService {
         List<Article> articlesByProductCategory = articleRepository.findArticlesByProductCategory(productService.getProduct(id).getCategory().getId());
         articlesByProductCategory = articlesByProductCategory.stream().filter(article -> article.getProduct().getId() !=id).collect(Collectors.toList());
         return articlesByProductCategory;
+    }
+    public List<Article> getArticlesByBrand(String name){
+        Brand brand = brandService.findBrand(name);
+        return articleRepository.getArticlesByBrand(brand.getId());
     }
 
     public List<Article> searchByName(String searchText,Integer page,Integer amount){

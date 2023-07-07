@@ -31,7 +31,9 @@ public class Product implements Comparable<Product>{
     private Category category;
 
     private String name;
-    private String brand;
+//    private String brand;
+    @ManyToOne
+    private Brand brand;
 
     @ManyToOne
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
@@ -69,10 +71,9 @@ public class Product implements Comparable<Product>{
     public Product(String name){
         this.name = name;
     }
-    public Product(String name,String description,String brand,User user) {
+    public Product(String name,String description,User user) {
         this.name = name;
         this.description = description;
-        this.brand = brand;
         this.user = user;
     }
 

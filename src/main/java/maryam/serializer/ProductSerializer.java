@@ -40,7 +40,7 @@ public class ProductSerializer extends StdSerializer<Product> {
         jgen.writeNumberField("id",product.getId());
         jgen.writeObjectField("category",product.getCategory());
         jgen.writeStringField("name",product.getName());
-        jgen.writeStringField("brand",product.getBrand());
+        jgen.writeStringField("brand",product.getBrand().getName());
         if (product.getProductGender()!=null){
             jgen.writeObjectField("productGender",product.getProductGender());
         }

@@ -54,7 +54,7 @@ public class ProductController {
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
-                .brand(product.getBrand())
+                .brand(product.getBrand().getName())
                 .tags(product.getTags().stream().map(tag -> tag.getName()).collect(Collectors.toList()))
                 .category(product.getCategory())
                 .dimensions(product.getDimensions())

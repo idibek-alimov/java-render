@@ -29,6 +29,7 @@ public class ProductService implements ProductServiceInterface{
     private final UserService userService;
     private final CategoryService categoryService;
     private final DimentsionsService dimentsionsService;
+    private final BrandService brandService;
 
     public Product getProductById(Long id){
         Optional<Product> product = productRepository.findById(id);
@@ -54,7 +55,7 @@ public class ProductService implements ProductServiceInterface{
                 .builder()
                 .name(productCreateDTO.getName())
                 .description(productCreateDTO.getDescription())
-                .brand(productCreateDTO.getBrand())
+                .brand(brandService.findBrand(productCreateDTO.getBrand()))
                 .user(user)
                 .build();
         product = categoryService.addCategoryToProduct(product,productCreateDTO.getCategory());
@@ -74,7 +75,7 @@ public class ProductService implements ProductServiceInterface{
             Product presentProduct = optionalProduct.get();
             presentProduct.setName(product.getName());
             presentProduct.setDescription(product.getDescription());
-            presentProduct.setBrand(product.getBrand());
+            presentProduct.setBrand(brandService.findBrand(product.getBrand()));
             presentProduct.setDimensions(dimentsionsService.updateDimensions(new Dimensions()
                     .builder()
                     .width(product.getDimensions().getWidth())

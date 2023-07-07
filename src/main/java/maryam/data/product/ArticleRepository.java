@@ -49,6 +49,8 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
     @Query(value="SELECT * FROM article WHERE id IN" +
             "(SELECT article_id FROM liked_articles WHERE user_id=?1) AND status!=3",nativeQuery = true)
     List<Article> getLikedArticles(Long id);
+    @Query(value = "SELECT * FROM article WHERE product_id IN (SELECT id FROM product WHERE brand_id=?1) ",nativeQuery = true)
+    List<Article> getArticlesByBrand(Long id);
 
 //    @Query(value="SELECT c.* FROM article c JOIN unnest(CAST((SELECT article_id FROM visit GROUP BY article_id ORDER BY COUNT(article_id) DESC) AS int)) WITH ORDINALITY t(id,ord) USING (id) ORDER BY t.ord",nativeQuery = true)
 //    Set<Article> getMostVisitedArticles(Set<Long> visitIdList);

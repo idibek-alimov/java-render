@@ -13,6 +13,7 @@ import maryam.models.product.Color;
 import maryam.models.product.Discount;
 import maryam.service.article.ArticleService;
 import maryam.service.like.LikeService;
+import maryam.service.product.BrandService;
 import maryam.storage.FileStorageService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,10 @@ public class ArticleController {
     @GetMapping(path = "/allow/category/{id}")
     public List<CustomerArticleDto> getListOfArticlesByCategory(@PathVariable("id")Long id) throws Exception{
         return articleService.getArticlesInProductByCategory(id).stream().map(this::articleToDTO).collect(Collectors.toList());
+    }
+    @GetMapping(path = "/allow/brand/{name}")
+    public List<CustomerArticleDto> getListOfArticlesByCategory(@PathVariable("name")String name){
+        return articleService.getArticlesByBrand(name).stream().map(this::articleToDTO).collect(Collectors.toList());
     }
     @GetMapping(path="/seller/colors/{id}")
     public List<ArticleUpdateDTO> getArticleColors(@PathVariable("id")Long id){
@@ -114,7 +119,7 @@ public class ArticleController {
 
     @GetMapping(path="/seller/removable/true")
     public List<CustomerArticleDto> getListByUserRemovable(){
-    return articleService.getByUserRemovableTrue().stream().map(article -> articleToDTO(article)).collect(Collectors.toList());
+    return articleService.getByUserRemovableTrue().stream().map(this::articleToDTO).collect(Collectors.toList());
 }
 
     @GetMapping(path = "/seller/delete/{id}")
@@ -144,7 +149,7 @@ public class ArticleController {
                 .likes(likeService.check_like(article.getId()))
                 .discounts(article.getDiscounts().stream().map(discount -> discount.getPercentage()).collect(Collectors.toList()))
                 .name(article.getProduct().getName())
-                .brand(article.getProduct().getBrand())
+                .brand(article.getProduct().getBrand().getName())
                 .description(article.getProduct().getDescription())
                 .category(article.getProduct().getCategory().getName())
                 .pictures(article.getPictures().stream().map(picture -> {

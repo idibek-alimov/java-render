@@ -57,7 +57,7 @@ public class ArticleSerializer extends StdSerializer<Article> {
         jgen.writeEndArray();
         jgen.writeNumberField("product_id",article.getProduct().getId());
         jgen.writeStringField("name",article.getProduct().getName());
-        jgen.writeStringField("brand",article.getProduct().getBrand());
+        jgen.writeStringField("brand",article.getProduct().getBrand().getName());
         if (article.getProduct().getProductGender()!=null){
             jgen.writeStringField("gender",article.getProduct().getProductGender().getName());
         }
