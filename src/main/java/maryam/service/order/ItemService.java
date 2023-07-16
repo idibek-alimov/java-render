@@ -33,15 +33,15 @@ public class ItemService {
         Item newItem;
         for (ItemCreateDto item : items) {
             Inventory inventory = inventoryService.getById(item.getInventoryId());
-            if (inventory != null && inventory.getInStock() && inventory.getQuantity() >= item.getQuantity()) {
+//            if (inventory != null && inventory.getInStock() && inventory.getQuantity() >= item.getQuantity()) {
                 newItem = new Item(inventory, item.getQuantity(), order, inventory.getArticle().getProduct().getUser(), userService.getCurrentUser());
                 newItem.setPrice(inventory.getPrice()* item.getQuantity());
                 itemList.add(newItem);
-                inventoryService.changeQuantity(inventory, inventory.getQuantity() - item.getQuantity());
-            }
-            else {
-                throw new RuntimeException("there is no more product left to order");
-            }
+//                inventoryService.changeQuantity(inventory, inventory.getQuantity() - item.getQuantity());
+//            }
+//            else {
+//                throw new RuntimeException("there is no more product left to order");
+//            }
         }
         itemList = (List<Item>) itemRepository.saveAll(itemList);
         order.setItems(itemList);
