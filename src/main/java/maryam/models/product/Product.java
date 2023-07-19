@@ -65,6 +65,13 @@ public class Product implements Comparable<Product>{
             orphanRemoval = true
     )
     private List<Article> articles = new ArrayList<>();
+    @JsonManagedReference
+    @Column
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ProductExtraInfo> productExtraInfoList = new ArrayList<>();
 
     @ManyToMany(mappedBy = "products")
     private List<Tag> tags = new ArrayList<>();

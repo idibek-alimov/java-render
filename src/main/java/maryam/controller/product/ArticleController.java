@@ -180,6 +180,7 @@ public class ArticleController {
     public CustomerInventoryDto inventoryToDto(Inventory inventory,List<Discount> discounts){
         CustomerInventoryDto inventoryDto = new CustomerInventoryDto()
                 .builder()
+                .quantity(inventory.getQuantity())
                 .id(inventory.getId())
                 .price(inventory.getPrice())
                 .inStock(inventory.getInStock())

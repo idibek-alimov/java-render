@@ -7,6 +7,7 @@ import maryam.data.product.ProductRepository;
 import maryam.data.user.UserRepository;
 import maryam.dto.article.CustomerArticleDto;
 import maryam.dto.inventory.InventoryDTO;
+import maryam.models.inventory.Inventory;
 import maryam.models.picture.Picture;
 import maryam.models.product.*;
 import maryam.models.tag.Tag;
@@ -20,9 +21,7 @@ import maryam.service.product.ProductService;
 import maryam.service.user.UserService;
 import maryam.service.visit.VisitService;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,8 +45,20 @@ public class ArticleService {
     private final ProductService productService;
     private final BrandService brandService;
 
+    public Boolean filterAvailable(Article article){
+        boolean available = false;
+        for(Inventory inventory:article.getInventory()){
+            if (inventory.getInStock()) {
+                available = true;
+                break;
+            }
+        }
+        return available;
+    }
     public  Page<Article> getArticlesByPage(Integer page,Integer amount){
-        return articleRepository.findAll(PageRequest.of(page,amount, Sort.by("createdAt").descending()));
+        return new PageImpl<Article>( articleRepository.findAll(PageRequest.of(page,amount, Sort.by("createdAt").descending()))
+                .stream()
+                .filter(this::filterAvailable).collect(Collectors.toList()));
     }
     public Product addArticleWithPicture(Long id,Article article,List<MultipartFile> pictures){
         Optional<Product> optionalProduct =  productRepository.findById(id);

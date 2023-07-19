@@ -33,6 +33,13 @@ public class InventoryController {
     public List<Inventory> getInventoriesInArticle(@PathVariable("id")Long id){
         return inventoryService.getInventoryInArticle(id);
     }
+
+    @GetMapping(path = "/allow/quantity/change/{id}/{quantity}")
+    public Inventory changeQuantity(@PathVariable("id")Long id,
+                                    @PathVariable("quantity") Integer quantity){
+        System.out.println("Inside the change quantity");
+        return inventoryService.changeQuantity(id,quantity);
+    }
     @GetMapping(path = "/seller/set/{id}/{option}/{value}")
     public Inventory setQuantity(@PathVariable("id")Long id,
                                  @PathVariable("option")String option,

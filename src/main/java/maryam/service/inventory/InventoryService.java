@@ -49,8 +49,8 @@ public class InventoryService implements InventoryServiceInterface{
                             .size(itemInventory.getSize())
                             .quantity(itemInventory.getQuantity())
                             .price(itemInventory.getPrice())
-                            .inStock(true)
-                            .available(true)
+                            .inStock(false)
+                            .available(false)
                             .build());
             cargoBarcodeService.createBarcode(inventory,counter);
             inventoryList.add(inventoryRepository.save(inventory));
@@ -65,9 +65,15 @@ public class InventoryService implements InventoryServiceInterface{
         }
         return null;
     }
+    public Inventory changeQuantity(Long inventoryId,Integer quantity){
+        return changeQuantity(inventoryRepository.findById(inventoryId).get(),quantity);
+    }
     public Inventory changeQuantity(Inventory inventory,Integer quantity){
         if (quantity==0){
             inventory.setInStock(false);
+        }
+        else {
+            inventory.setInStock(true);
         }
         inventory.setQuantity(quantity);
         return inventory;
