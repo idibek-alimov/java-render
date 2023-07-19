@@ -68,7 +68,7 @@ public class FileStorageService implements FileStorageServiceInterface {
             //            System.out.println("after saving image");
 //            new_name = file.getOriginalFilename();
             File fileObj = convertMultiPartFileToFile(file);
-            //s3Client.putObject(new PutObjectRequest(bucketName,new_name,fileObj));
+            s3Client.putObject(new PutObjectRequest(bucketName,new_name,fileObj));
             fileObj.delete();
             return new_name;
         }catch (Exception e){
