@@ -66,7 +66,7 @@ public class SecurityConfig{// extends WebSecurityConfigurerAdapter {
                 //.cors().disable()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/user/authenticate/**","/api/article/allow/**","/api/inventory/allow/**","/api/user/upgrade/seller")
+                .requestMatchers("/api/user/authenticate/**","/api/article/allow/**","/api/inventory/allow/**","/api/user/upgrade/seller","/api/order/allow/**")
                 .permitAll()
                 .requestMatchers("/api/user/user/**","/api/article/user/**","/api/product/user/**","/api/item/user/**","/api/order/user/**")
                 .hasRole("USER")

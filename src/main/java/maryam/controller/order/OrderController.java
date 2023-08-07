@@ -9,9 +9,13 @@ import maryam.dto.order.WeekOrderClass;
 import maryam.dto.order.WeekOrderStatisticDTO;
 import maryam.models.order.Item;
 import maryam.models.order.Order;
+import maryam.models.order.PickPoint;
 import maryam.service.order.OrderService;
+import maryam.service.order.PickPointService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,6 +25,16 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final PickPointService pickPointService;
+
+    @PostMapping(path = "/allow/pp/add",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE})
+    public PickPoint addPickPoint(@RequestPart("pp") PickPoint pickPoint, @RequestPart("picture")List<MultipartFile> pictures){
+        return pickPointService.createPickPoint(pickPoint,pictures);
+    }
+    @GetMapping(path = "/allow/pp/all")
+    public List<PickPoint> listOfPickPoints(){
+        return pickPointService.getAllPickPoints();
+    }
 
     @PostMapping(path ="/add")
     public Long addNewOrder(@RequestBody OrderCreateDto orderCreateDto) throws Exception{
