@@ -28,7 +28,10 @@ import java.util.List;
 @AllArgsConstructor
 public class Order {
 
+
     public  enum Status {InQueue,Shipping,Arrived,Delivered};
+    public enum DeliveryMethod{PickPoint,Courier};
+
     @JsonView(View.OnlyId.class)
     @Id
     @GeneratedValue(generator = "orders_id_generator", strategy = GenerationType.SEQUENCE)
@@ -42,6 +45,8 @@ public class Order {
     private User user;
 
     private String address;
+    private String[] coordinates = new String[2];
+    private DeliveryMethod deliveryMethod;
 
     @JsonManagedReference
     @Column(name="items")
@@ -61,8 +66,20 @@ public class Order {
     public Order(User user1){
         this.user = user1;
     }
+
     @PrePersist
     public void setcreationtime(){
         this.created_at = LocalDateTime.now();
+    }
+    public static DeliveryMethod getDeliveryMethodByIndex(Integer index){
+        if (index == 0){
+            return DeliveryMethod.PickPoint;
+        }
+        else if(index == 1){
+            return  DeliveryMethod.Courier;
+        }
+        else {
+            return null;
+        }
     }
 }

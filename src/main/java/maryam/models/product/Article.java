@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 @Getter
+@Data
 @Setter
 @Entity
 @AllArgsConstructor
@@ -24,6 +25,7 @@ import java.util.List;
 @Jacksonized
 @JsonSerialize(using= ArticleSerializer.class)
 public class Article {
+
     public  enum Status {NoPicture,Active,Removable,Deleted};
     @Id
     @GeneratedValue(generator = "article_id_generator", strategy = GenerationType.SEQUENCE)

@@ -33,6 +33,10 @@ public class ArticleController {
     private final ArticleService articleService;
     private final LikeService likeService;
     private final FileStorageService fileStorageService;
+    @GetMapping(path = "/allow/400")
+    public ResponseEntity<String> get400() throws Error{
+        throw new Error("error 400 bitch");
+    }
     @GetMapping(path="/allow/{page}/{amount}")
     public ResponseEntity<List<CustomerArticleDto>> getListOfArticlesDto(@PathVariable("page")Integer page,
                                                                         @PathVariable("amount")Integer amount) {
@@ -90,17 +94,15 @@ public class ArticleController {
     public List<CustomerArticleDto> searchArticle(@PathVariable("searchText")String searchText,
                                        @PathVariable("page")Integer page,
                                        @PathVariable("amount")Integer amount){
-        System.out.println("inside search");
-        System.out.println(searchText);
-            try {
-                List<Article> articleList = new ArrayList<>();
-                Long article_id = Long.parseLong(searchText);
-                articleList.add(articleService.getArticle(article_id).get());
-                return articleList.stream().map(this::articleToDTO).collect(Collectors.toList());
-            }
-            catch (Exception nfe){
+//            try {
+//                List<Article> articleList = new ArrayList<>();
+//                Long article_id = Long.parseLong(searchText);
+//                articleList.add(articleService.getArticle(article_id).get());
+//                return articleList.stream().map(this::articleToDTO).collect(Collectors.toList());
+//            }
+//            catch (Exception nfe){
                 return articleService.searchByName(searchText,page,amount).stream().map(this::articleToDTO).collect(Collectors.toList());
-            }
+//            }
     }
     @GetMapping(path="/name/{name}/{page}/{amount}")
     public List<CustomerArticleDto> getListByName(@PathVariable("name")String name,

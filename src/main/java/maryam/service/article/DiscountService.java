@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class DiscountService {
-    private final DiscountRepository discountRepository;
+    private DiscountRepository discountRepository;
     public Discount addDiscount(Article article,Integer percentage){
         Discount discount = new Discount(article,percentage);
         discount = discountRepository.save(discount);

@@ -29,10 +29,11 @@ public class OrderService {
     public Order addOrder(OrderCreateDto orderCreateDto) throws Exception{
         try {
             User user = userService.getCurrentUser();
-            System.out.println(user);
                 Order order = orderRepository.save(new Order()
                         .builder()
                                 .user(user)
+                                .deliveryMethod(Order.getDeliveryMethodByIndex(orderCreateDto.getDeliveryMethod()))
+                                .coordinates(orderCreateDto.getCoordinates())
                                 .address(orderCreateDto.getAddress())
                         .build());
                 order.setItems(itemService.addItems(orderCreateDto.getItems(), order));

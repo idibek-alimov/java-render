@@ -13,5 +13,7 @@ import java.util.List;
 @Data
 public class OrderCreateDto {
     private String address;
+    private String[] coordinates;
+    private Integer deliveryMethod;
     private List<ItemCreateDto> items = new ArrayList<>();
 }

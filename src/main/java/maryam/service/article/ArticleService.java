@@ -5,24 +5,18 @@ import maryam.data.product.ArticleRepository;
 
 import maryam.data.product.ProductRepository;
 import maryam.data.user.UserRepository;
-import maryam.dto.article.CustomerArticleDto;
-import maryam.dto.inventory.InventoryDTO;
 import maryam.models.inventory.Inventory;
-import maryam.models.picture.Picture;
 import maryam.models.product.*;
-import maryam.models.tag.Tag;
 import maryam.models.user.User;
 import maryam.service.color.ColorService;
 import maryam.service.inventory.InventoryService;
-import maryam.service.like.LikeService;
 import maryam.service.picture.PictureService;
 import maryam.service.product.BrandService;
 import maryam.service.product.ProductService;
+import maryam.service.search.SearchItemService;
 import maryam.service.user.UserService;
 import maryam.service.visit.VisitService;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,6 +38,7 @@ public class ArticleService {
     private final DiscountService discountService;
     private final ProductService productService;
     private final BrandService brandService;
+
 
     public Boolean filterAvailable(Article article){
         boolean available = false;
@@ -150,8 +145,9 @@ public class ArticleService {
         Brand brand = brandService.findBrand(name);
         return articleRepository.getArticlesByBrand(brand.getId());
     }
-
+    private final SearchItemService searchItemService;
     public List<Article> searchByName(String searchText,Integer page,Integer amount){
+        searchItemService.addSearchItem(searchText);
         return articleRepository.findBySimilarName(searchText,PageRequest.of(page,amount));
     }
     public List<Article> searchSpecificName(String name,Integer page,Integer amount){

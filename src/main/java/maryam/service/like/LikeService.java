@@ -26,9 +26,14 @@ public class LikeService {
         //Optional<Product> optionalProduct = productRepository.findById(id);
         Optional<Article> optionalArticle = articleRepository.findById(id);
         User user = userService.getCurrentUser();
-        System.out.println(user);
+//        System.out.println(user);
         if (user != null) {
-            return likeRepository.findByArticleAndUser(optionalArticle.get(), userService.getCurrentUser()).isPresent();
+            try {
+                return likeRepository.findByArticleAndUser(optionalArticle.get(), userService.getCurrentUser()).isPresent();
+            }
+            catch (Exception e){
+                return false;
+            }
         }
         else {
             return false;
